@@ -1,5 +1,5 @@
 Клиентская часть андроид приложения с рабочим названием ReviewerWriter.
-Ссылка на репозиторий с серверной частью: //TODO
+Ссылка на репозиторий с серверной частью: https://github.com/Unstantin/ReviewerWriterServer
 
 targetAPI : 31
 
