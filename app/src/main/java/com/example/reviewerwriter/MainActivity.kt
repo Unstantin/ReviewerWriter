@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
+import com.example.reviewerwriter.view.LoginView
+import com.example.reviewerwriter.viewModel.LoginViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,12 +24,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    // вызываем экран входа в акк в который передаем текущую активность
+                    LoginView().loginView(LoginViewModel(this))
                 }
             }
         }
     }
 }
+
+
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -41,6 +47,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     ReviewerWriterTheme {
-        Greeting("Android")
+
     }
 }
