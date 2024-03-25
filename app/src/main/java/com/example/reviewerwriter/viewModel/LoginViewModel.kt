@@ -64,7 +64,8 @@ class LoginViewModel{
                 catch(e: Exception){
                     // вызов тоста в основном потоке
                     withContext(Dispatchers.Main) {
-                        _error.postValue("error")                    }
+                        _error.postValue("error")
+                    }
                 }
             }
         }
