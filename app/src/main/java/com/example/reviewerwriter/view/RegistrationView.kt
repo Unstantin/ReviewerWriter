@@ -126,7 +126,7 @@ fun ObserveError(registrationViewModel : RegistrationViewModel, context: Context
     // отслеживание и вывод ошибок
     registrationViewModel.error.observeAsState().value?.let { errorMessage ->
         if(errorMessage.trim().isNotEmpty()) {
-            Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             registrationViewModel.onErrorDone()
         }
     }
