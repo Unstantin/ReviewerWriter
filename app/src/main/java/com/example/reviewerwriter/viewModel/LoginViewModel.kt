@@ -51,14 +51,14 @@ class LoginViewModel{
             // отправка запроса в многопоточном режиме
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val LoginResponses = mainApi.authentication(
+                    val loginResponses = mainApi.authentication(
                         LoginRequest(
                             usernameTextField.value,
                             passwordTextField.value
                         )
                     )
                     /*TODO: сделать проверку на null для errorInfo*/
-                    Log.w("myRequest", LoginResponses.errorInfo)
+                    Log.w("myRequest", loginResponses.errorInfo)
                     /*todo: обработка данных с бэка*/
                 }
                 catch(e: Exception){
@@ -74,7 +74,7 @@ class LoginViewModel{
             _error.postValue("все поля должны быть заполнены")
         }
     }
-    fun checkFieldForText(field: String) : Boolean{
+    private fun checkFieldForText(field: String) : Boolean{
         return field.trim().isNotEmpty()
     }
 }

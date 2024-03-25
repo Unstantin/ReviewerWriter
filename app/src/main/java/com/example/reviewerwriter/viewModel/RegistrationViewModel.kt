@@ -50,10 +50,10 @@ class RegistrationViewModel {
             _error.postValue("все поля должны быть заполнены")
         }
     }
-    fun checkFieldForText(field: String) : Boolean{
+    private fun checkFieldForText(field: String) : Boolean{
         return field.trim().isNotEmpty()
     }
-    fun checkPasswordMatch(password1: String, password2: String): Boolean{
+    private fun checkPasswordMatch(password1: String, password2: String): Boolean{
         return password1 == password2
     }
 }
