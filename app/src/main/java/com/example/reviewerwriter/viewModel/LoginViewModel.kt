@@ -7,36 +7,34 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.reviewerwriter.model.LoginRequest
 import com.example.reviewerwriter.retrofit.NetworkModule
+import com.example.reviewerwriter.utils.ObserveNavigationInterface
+import com.example.reviewerwriter.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginViewModel{
-    // Состояние для полей кнопок
-    val textButtonSignIn = mutableStateOf("SIGN IN")
-    val textButtonSignUp = mutableStateOf("SIGN UP")
+class LoginViewModel : showToastMessage , ObserveNavigationInterface{
 
-    // для исключений
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+
+    // для вывода сообщение
+    override val _showToastMessage = MutableLiveData<String>()
 
     // LiveData для навигации
-    private val _navigateToRegistration = MutableLiveData<Boolean>()
-    val navigateToRegistration: LiveData<Boolean> get() = _navigateToRegistration
+    override val _navigateTo = MutableLiveData<Boolean>()
 
-    fun onTextButtonSignInClick(){
+    override fun onTextButtonSignInClick(){
         /*TODO: сделать визуализацию(заглушку) нажатия*/
     }
     fun onTextButtonSignUpClick(){
         /*TODO:  сделать визуализацию нажатия*/
-        _navigateToRegistration.value = true
+        _navigateTo.value = true
     }
-    fun onNavigationDone() {
-        _navigateToRegistration.value = null
+    override fun onNavigationDone() {
+        _navigateTo.value = null
     }
-    fun onErrorDone(){
-        _error.value = ""
+    override fun onshowToastMessageDone(){
+        _showToastMessage.value = ""
     }
     fun onButtonSignInClick(usernameTextField: MutableState<String>,
                             passwordTextField: MutableState<String>){
@@ -64,7 +62,7 @@ class LoginViewModel{
                 catch(e: Exception){
                     // вызов тоста в основном потоке
                     withContext(Dispatchers.Main) {
-                        _error.postValue("error")
+                        _showToastMessage.postValue("error")
                     }
                 }
             }
@@ -72,7 +70,7 @@ class LoginViewModel{
         else{
             Log.w("ЛОГ1", "Не все поля заполнены")
             /*todo: анимация остутствия инфы в поле*/
-            _error.postValue("все поля должны быть заполнены")
+            _showToastMessage.postValue("все поля должны быть заполнены")
         }
     }
     private fun checkFieldForText(field: String) : Boolean{

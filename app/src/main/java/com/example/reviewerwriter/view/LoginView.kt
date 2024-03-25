@@ -28,25 +28,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.reviewerwriter.R
+import com.example.reviewerwriter.utils.ObserveNavigation
+import com.example.reviewerwriter.utils.ObserveToastMessage
 import com.example.reviewerwriter.viewModel.LoginViewModel
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginView(context: Context, onClick: () -> Unit) {
     val loginViewModel = LoginViewModel()
+
+    // Состояние для полей кнопок
+    val usernameTextField = remember { mutableStateOf("") }
+    val passwordTextField = remember { mutableStateOf("") }
+    val textButtonSignIn = mutableStateOf("SIGN IN")
+    val textButtonSignUp = mutableStateOf("SIGN UP")
+    val mainText = "ReviewerWriterApp"
+    val usernameTextFieldPlaceholder = "Username"
+    val passwordTextFieldPlaceholder = "Password"
+    val mainButtonText = "SIGN IN"
+
     //отслеживание
-    ObserveError(loginViewModel, context)
+    ObserveToastMessage(loginViewModel, context)
     ObserveNavigation(loginViewModel, onClick)
 
     Scaffold {
+
         // размещение элементов на экране
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             //verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "ReviewerWriterApp", modifier = Modifier.padding(top = 94.dp))
+            Text(text = mainText, modifier = Modifier.padding(top = 94.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,29 +70,29 @@ fun LoginView(context: Context, onClick: () -> Unit) {
 
                 TextButton(onClick = { loginViewModel.onTextButtonSignInClick() }) {
                     Text(
-                        text = loginViewModel.textButtonSignIn.value,
+                        text = textButtonSignIn.value,
                         modifier = Modifier.padding(end = 16.dp)
                     )
                 }
                 TextButton(onClick = { loginViewModel.onTextButtonSignUpClick() }) {
                     Text(
-                        text = loginViewModel.textButtonSignUp.value,
+                        text = textButtonSignUp.value,
                         modifier = Modifier.padding(start = 16.dp)
                     )
                 }
             }
-            val usernameTextField = remember { mutableStateOf("") }
+
             TextField(
                 value = usernameTextField.value,
                 onValueChange = { usernameTextField.value = it },
                 modifier = Modifier.padding(top = 25.dp),
-                placeholder = { Text("Username") }
+                placeholder = { Text(usernameTextFieldPlaceholder) }
             )
-            val passwordTextField = remember { mutableStateOf("") }
+
             TextField(value = passwordTextField.value,
                 onValueChange = { passwordTextField.value = it },
                 modifier = Modifier.padding(top = 25.dp),
-                placeholder = { Text("Password") },
+                placeholder = { Text(passwordTextFieldPlaceholder) },
                 visualTransformation = PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { /*TODO: нажатие на просмотр пароля*/ }) {
@@ -102,34 +116,12 @@ fun LoginView(context: Context, onClick: () -> Unit) {
                     .padding(60.dp)
                     .size(276.dp, 45.dp)
             ) {
-                Text("SIGN IN")
+                Text(mainButtonText)
             }
         }
     }
 }
 
-@Composable
-fun ObserveError(loginViewModel: LoginViewModel, context: Context) {
-    // отслеживание и вывод ошибок
-    loginViewModel.error.observeAsState().value?.let { errorMessage ->
-        if(errorMessage.trim().isNotEmpty()){
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            loginViewModel.onErrorDone()
-        }
-
-    }
-}
-
-@Composable
-fun ObserveNavigation(loginViewModel: LoginViewModel, onClick: () -> Unit) {
-    // отслеживание и переход между экранами
-    loginViewModel.navigateToRegistration.observeAsState().value?.let { shouldNavigate ->
-        if (shouldNavigate) {
-            loginViewModel.onNavigationDone()
-            onClick()
-        }
-    }
-}
 
 /*
 @Preview(showBackground = true)

@@ -2,7 +2,6 @@ package com.example.reviewerwriter.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,15 +28,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.reviewerwriter.R
+import com.example.reviewerwriter.utils.ObserveNavigation
+import com.example.reviewerwriter.utils.ObserveToastMessage
 import com.example.reviewerwriter.viewModel.RegistrationViewModel
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationView (context: Context, onClick: () -> Unit){
     val registrationViewModel = RegistrationViewModel()
 
+    // Состояние для полей кнопок
+    val usernameTextField = remember { mutableStateOf("") }
+    val passwordTextField = remember { mutableStateOf("") }
+    val confirmPasswordTextField = remember { mutableStateOf("") }
+    val textButtonSignIn = mutableStateOf("SIGN IN")
+    val textButtonSignUp = mutableStateOf("SIGN UP")
+    val mainText = "ReviewerWriterApp"
+    val usernameTextFieldPlaceholder = "Username"
+    val passwordTextFieldPlaceholder = "Password"
+    val confirmPasswordTextFieldPlaceholder = "Confirm Password"
+    val mainButtonText = "SIGN UP"
+
     //отслеживание
-    ObserveError(registrationViewModel, context)
+    ObserveToastMessage(registrationViewModel, context)
     ObserveNavigation(registrationViewModel, onClick)
 
     Scaffold{
@@ -46,7 +59,7 @@ fun RegistrationView (context: Context, onClick: () -> Unit){
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Text(text = "ReviewerWriterApp", modifier = Modifier.padding(top = 94.dp))
+            Text(text = mainText, modifier = Modifier.padding(top = 94.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,29 +69,29 @@ fun RegistrationView (context: Context, onClick: () -> Unit){
 
                 TextButton(onClick = { registrationViewModel.onTextButtonSignInClick() }) {
                     Text(
-                        text = registrationViewModel.textButtonSignIn.value,
+                        text = textButtonSignIn.value,
                         modifier = Modifier.padding(end = 16.dp)
                     )
                 }
                 TextButton(onClick = { registrationViewModel.onTextButtonSignUpClick() }) {
                     Text(
-                        text = registrationViewModel.textButtonSignUp.value,
+                        text = textButtonSignUp.value,
                         modifier = Modifier.padding(start = 16.dp)
                     )
                 }
             }
-            val usernameTextField = remember { mutableStateOf("") }
+
             TextField(
                 value = usernameTextField.value,
                 onValueChange = { usernameTextField.value = it },
                 modifier = Modifier.padding(top = 25.dp),
-                placeholder = { Text("Username") }
+                placeholder = { Text(usernameTextFieldPlaceholder) }
             )
-            val passwordTextField = remember { mutableStateOf("") }
+
             TextField(value = passwordTextField.value,
                 onValueChange = { passwordTextField.value = it},
                 modifier = Modifier.padding(top = 25.dp),
-                placeholder = { Text("Password") },
+                placeholder = { Text(passwordTextFieldPlaceholder) },
                 visualTransformation = PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { /*TODO: нажатие на просмотр пароля*/ }) {
@@ -89,11 +102,11 @@ fun RegistrationView (context: Context, onClick: () -> Unit){
                     }
                 }
             )
-            val confirmPasswordTextField = remember { mutableStateOf("") }
+
             TextField(value = confirmPasswordTextField.value,
                 onValueChange = { confirmPasswordTextField.value = it},
                 modifier = Modifier.padding(top = 25.dp),
-                placeholder = { Text("Confirm Password") },
+                placeholder = { Text(confirmPasswordTextFieldPlaceholder) },
                 visualTransformation = PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { /*TODO: нажатие на просмотр пароля*/ }) {
@@ -115,30 +128,8 @@ fun RegistrationView (context: Context, onClick: () -> Unit){
                     .padding(60.dp)
                     .size(276.dp, 45.dp)
             ) {
-                Text("SIGN UP")
+                Text(mainButtonText)
             }
-        }
-    }
-}
-
-@Composable
-fun ObserveError(registrationViewModel : RegistrationViewModel, context: Context) {
-    // отслеживание и вывод ошибок
-    registrationViewModel.error.observeAsState().value?.let { errorMessage ->
-        if(errorMessage.trim().isNotEmpty()) {
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            registrationViewModel.onErrorDone()
-        }
-    }
-}
-
-@Composable
-fun ObserveNavigation(registrationViewModel : RegistrationViewModel, onClick: () -> Unit) {
-    // отслеживание и переход между экранами
-    registrationViewModel.navigateToLogin.observeAsState().value?.let { shouldNavigate ->
-        if (shouldNavigate) {
-            registrationViewModel.onNavigationDone()
-            onClick()
         }
     }
 }

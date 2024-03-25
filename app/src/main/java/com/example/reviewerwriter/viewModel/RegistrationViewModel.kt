@@ -7,34 +7,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.reviewerwriter.model.RegistrationRequest
 import com.example.reviewerwriter.retrofit.NetworkModule
+import com.example.reviewerwriter.utils.ObserveNavigationInterface
+import com.example.reviewerwriter.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class RegistrationViewModel {
-    // Состояние для полей кнопок
-    val textButtonSignIn = mutableStateOf("SIGN IN")
-    val textButtonSignUp = mutableStateOf("SIGN UP")
+class RegistrationViewModel : showToastMessage , ObserveNavigationInterface{
 
-    // для исключений
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    // для вывода сообщений
+    override val _showToastMessage = MutableLiveData<String>()
 
     // LiveData для навигации
-    private val _navigateToLogin = MutableLiveData<Boolean>()
-    val navigateToLogin: LiveData<Boolean> get() = _navigateToLogin
-    fun onTextButtonSignInClick(){
-        _navigateToLogin.value = true
+    override val _navigateTo = MutableLiveData<Boolean>()
+    override fun onTextButtonSignInClick(){
+        _navigateTo.value = true
     }
     fun onTextButtonSignUpClick(){
         /*todo:*/
     }
-    fun onNavigationDone() {
-        _navigateToLogin.value = null
+    override fun onNavigationDone() {
+        _navigateTo.value = null
     }
-    fun onErrorDone(){
-        _error.value = ""
+
+    override fun onshowToastMessageDone(){
+        _showToastMessage.value = ""
     }
     fun onButtonSignUPClick(usernameTextField: MutableState<String>,
                             passwordTextField: MutableState<String>,
@@ -59,10 +57,10 @@ class RegistrationViewModel {
                                 passwordTextField.value
                             )
                         ).code
-                        _error.postValue("код статуса = ${statusCode}")
+                        _showToastMessage.postValue("код статуса = ${statusCode}")
 
                     }catch (e: Exception){
-                        _error.postValue("error")
+                        _showToastMessage.postValue("error")
                         Log.w("error","${e.message}")
                     }
                 }
@@ -71,12 +69,12 @@ class RegistrationViewModel {
             }
             else{
                 /*todo: анимация остутствия инфы в поле*/
-                _error.postValue("пароли должны совпадать")
+                _showToastMessage.postValue("пароли должны совпадать")
             }
         }
         else{
             /*todo: анимация остутствия инфы в поле*/
-            _error.postValue("все поля должны быть заполнены")
+            _showToastMessage.postValue("все поля должны быть заполнены")
         }
     }
     private fun checkFieldForText(field: String) : Boolean{
