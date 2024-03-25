@@ -59,12 +59,15 @@ class RegistrationViewModel {
                                 passwordTextField.value
                             )
                         ).code
-                    _error.postValue("код статуса = ${statusCode}")
+                        _error.postValue("код статуса = ${statusCode}")
+
                     }catch (e: Exception){
                         _error.postValue("error")
                         Log.w("error","${e.message}")
                     }
                 }
+                // для перехода на экран login после успешной регистрации
+                onTextButtonSignInClick()
             }
             else{
                 /*todo: анимация остутствия инфы в поле*/
