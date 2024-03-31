@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -30,25 +32,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.reviewerwriter.R
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.reviewerwriter.ui.theme.DarkMuted
 import com.example.reviewerwriter.ui.theme.DarkVibrant
 import com.example.reviewerwriter.ui.theme.LightMuted
 import com.example.reviewerwriter.ui.theme.Muted
 import com.example.reviewerwriter.ui.theme.Vibrant
-import com.example.reviewerwriter.utils.ObserveNavigation
 import com.example.reviewerwriter.utils.ObserveToastMessage
 import com.example.reviewerwriter.viewModel.RegistrationViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
+fun RegistrationView (context: Context, navController: NavController){
     val registrationViewModel = remember {
-        RegistrationViewModel()
+        RegistrationViewModel(navController)
     }
 
     // Состояние для полей кнопок
@@ -63,21 +64,10 @@ fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
     val confirmPasswordTextFieldPlaceholder = "Confirm Password"
     val mainButtonText = "SIGN UP"
 
-    // Состояние для полей кнопок
-    val usernameTextField = remember { mutableStateOf("") }
-    val passwordTextField = remember { mutableStateOf("") }
-    val confirmPasswordTextField = remember { mutableStateOf("") }
-    val textButtonSignIn = mutableStateOf("SIGN IN")
-    val textButtonSignUp = mutableStateOf("SIGN UP")
-    val mainText = "ReviewerWriterApp"
-    val usernameTextFieldPlaceholder = "Username"
-    val passwordTextFieldPlaceholder = "Password"
-    val confirmPasswordTextFieldPlaceholder = "Confirm Password"
-    val mainButtonText = "SIGN UP"
 
     //отслеживание
     ObserveToastMessage(registrationViewModel, context)
-    ObserveNavigation(registrationViewModel, onNavigateTo)
+
     Scaffold{
         // размещение элементов на экране
         Column(
@@ -138,10 +128,10 @@ fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
                 placeholder = { Text(passwordTextFieldPlaceholder) },
                 visualTransformation = PasswordVisualTransformation(),
                 trailingIcon = {
-                    IconButton(onClick = { /*TODO: нажатие на просмотр пароля*/ }) {
+                    IconButton(onClick = {/*TODO: нажатие на просмотр пароля*/ }) {
                         Icon(
                             /*TODO: изменить иконку для нажатия*/
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                            imageVector = Icons.Default.Visibility,
                             contentDescription = "Visability Icon")
                     }
                 },
@@ -163,7 +153,7 @@ fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
                     IconButton(onClick = { /*TODO: нажатие на просмотр пароля*/ }) {
                         Icon(
                             /*TODO: изменить иконку для нажатия*/
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                            imageVector = Icons.Default.Visibility,
                             contentDescription = "Visability Icon")
                     }
                 },
@@ -191,10 +181,9 @@ fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
     }
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
-    RegistrationView(context = LocalContext.current, onClick = {})
+        val navController = rememberNavController()
+    RegistrationView(context = LocalContext.current, navController)
 }
-*/

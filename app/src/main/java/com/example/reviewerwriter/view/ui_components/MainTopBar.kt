@@ -2,11 +2,13 @@ package com.example.reviewerwriter.view.ui_components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,16 +21,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainTopBar(mainViewModel : MainViewModel, drawerState: DrawerState){
     val scope = rememberCoroutineScope()
-    //val drawerState = rememberDrawerState(initialValue = mainViewModel.drawerState.value)
-    TopAppBar(
-        title = { /*TODO*/ },
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    CenterAlignedTopAppBar(
+        title = { Text(text = "Home") },
         navigationIcon = {
              IconButton(
                  onClick = {
                      scope.launch {
                          drawerState.open()
                      }
-                         //mainViewModel.onNavigationButtonClick(drawerState)
+                     /*TODO: в model мб*/
                 }
              ) 
              {
@@ -38,11 +40,21 @@ fun MainTopBar(mainViewModel : MainViewModel, drawerState: DrawerState){
                 )
              }
         },
+        actions = {
+                  IconButton(onClick = { /*TODO*/ }) {
+                      Icon(
+                          imageVector = Icons.Default.Search,
+                          contentDescription = "Поиск",
+                      )
+                      
+                  }
+        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = DarkMuted,
             titleContentColor = Vibrant,
             navigationIconContentColor = Vibrant
         ),
+        scrollBehavior = scrollBehavior
     )
 
 }

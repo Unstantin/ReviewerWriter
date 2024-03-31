@@ -2,12 +2,10 @@ package com.example.reviewerwriter.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavController
 import com.example.reviewerwriter.model.RegistrationRequest
 import com.example.reviewerwriter.retrofit.NetworkModule
-import com.example.reviewerwriter.utils.ObserveNavigationInterface
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -15,29 +13,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class RegistrationViewModel : showToastMessage , ObserveNavigationInterface{
-
+class RegistrationViewModel (navController: NavController): showToastMessage {
+    val navController = navController
     // для вывода сообщений
     override val _showToastMessage = MutableLiveData<String>()
 
-    // LiveData для навигации
-    override val _navigateTo = MutableLiveData<String>()
-    override fun onTextButtonSignInClick(){
-        _navigateTo.value = Screens.LOGIN_SCREEN
+    fun onTextButtonSignInClick(){
+        navController.navigate(Screens.LOGIN_SCREEN)
     }
     fun onTextButtonSignUpClick(){
         /*todo:*/
     }
-    override fun onNavigationDone() {
-        _navigateTo.value = ""
-    }
-
     override fun onshowToastMessageDone(){
         _showToastMessage.value = ""
     }
     fun onButtonSignUPClick(usernameTextField: MutableState<String>,
                             passwordTextField: MutableState<String>,
                             confirmPasswordTextField: MutableState<String>){
+        /*TODO: проверка на отсутствие спец символов*/
+
         // проверка на значения в полях
         if(checkFieldForText(usernameTextField.value) &&
             checkFieldForText(passwordTextField.value) &&
@@ -66,7 +60,7 @@ class RegistrationViewModel : showToastMessage , ObserveNavigationInterface{
                     }
                 }
                 // для перехода на экран login после успешной регистрации
-                onTextButtonSignInClick()
+                navController.navigate(Screens.LOGIN_SCREEN)
             }
             else{
                 /*todo: анимация остутствия инфы в поле*/

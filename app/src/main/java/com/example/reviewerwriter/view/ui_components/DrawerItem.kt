@@ -4,5 +4,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 data class DrawerItem(
     val image : ImageVector,
-    val title: String
+    val title: String,
+    val screen: String
 )

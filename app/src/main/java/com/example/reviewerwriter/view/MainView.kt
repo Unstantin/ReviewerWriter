@@ -27,8 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.reviewerwriter.ui.theme.Muted
 import com.example.reviewerwriter.ui.theme.Vibrant
+import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.view.ui_components.DrawerItem
 import com.example.reviewerwriter.view.ui_components.MyScaffold
 import com.example.reviewerwriter.viewModel.MainViewModel
@@ -37,26 +40,30 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(context : Context){
+fun MainView(context : Context, navController: NavController){
     val mainViewModel = remember {
-        MainViewModel()
+        MainViewModel(navController)
     }
     val items = listOf(
         DrawerItem(
             Icons.Default.Settings,
-            title = "Настройки"
+            title = "Настройки",
+            screen = Screens.MAIN_SCREEN
         ),
         DrawerItem(
             Icons.Default.Add,
-            title = "Пригласить"
+            title = "Пригласить",
+            screen = Screens.MAIN_SCREEN
         ),
         DrawerItem(
             Icons.Default.Info,
-            title = "Помощь"
+            title = "Помощь",
+            screen = Screens.MAIN_SCREEN
         ),
         DrawerItem(
             Icons.Default.ExitToApp,
-            title = "Выход"
+            title = "Выход",
+            screen = Screens.LOGIN_SCREEN
         )
     )
     val scope = rememberCoroutineScope()
@@ -66,14 +73,12 @@ fun MainView(context : Context){
         drawerState = drawerState,
         scrimColor = Color.Black.copy(alpha = 0.7f),
         modifier = Modifier
-            .background(Muted)
+            .background(Color.Red)
             .fillMaxWidth(),
 
         drawerContent = {
             ModalDrawerSheet(
-
                 modifier = Modifier
-                    .background(Muted)
                     .requiredWidth(300.dp)
                     .fillMaxWidth()
             ) {
@@ -82,8 +87,6 @@ fun MainView(context : Context){
                 Spacer(modifier = Modifier.height(150.dp).background(Muted))
                 items.forEach { item ->
                     NavigationDrawerItem(
-                        modifier = Modifier
-                            .background(Muted),
                         icon = {
                                Icon(
                                    imageVector = item.image,
@@ -101,10 +104,10 @@ fun MainView(context : Context){
                         },
                         selected = false,
                         onClick = {
+                            navController.navigate(item.screen)
                             scope.launch {
                                 drawerState.close()
                             }
-
                             /*TODO: перенести в model*/
                         }
                     )
@@ -121,6 +124,6 @@ fun MainView(context : Context){
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
-    MainView(context = LocalContext.current)
-
+    val navController = rememberNavController()
+    MainView(context = LocalContext.current, navController)
 }

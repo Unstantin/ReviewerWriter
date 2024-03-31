@@ -37,28 +37,18 @@ class MainActivity : ComponentActivity() {
                     //запуск активности экрана входа
                     NavHost(
                         navController = navController,
-                        startDestination = Screens.MAIN_SCREEN
+                        startDestination = Screens.LOGIN_SCREEN
                     ) {
                         composable(Screens.LOGIN_SCREEN) {
-                            LoginView(context = this@MainActivity
-                            ){
-                                navController.navigate(it)
-                            }
+                            LoginView(context = this@MainActivity, navController)
                         }
+
                         composable(Screens.REGISTRATION_SCREEN) {
-                            RegistrationView(context = this@MainActivity){
-                                navController.navigate(it){
-                                    // очистить весь стек экранов кроме указанного (LOGIN_SCREEN)
-                                    popUpTo(it){
-                                        // удаляет из стека так же указанный экран
-                                        // благодаря чему при нажатии кнопки "назад" приложение закроется
-                                        inclusive = true
-                                    }
-                                }
-                            }
+                            RegistrationView(context = this@MainActivity, navController)
                         }
+
                         composable(Screens.MAIN_SCREEN){
-                            MainView(context = this@MainActivity)
+                            MainView(context = this@MainActivity, navController)
                         }
                         /*TODO: вариантивность переходов в экраны
                            (один экран имеет возможность открыть несколько других)*/
