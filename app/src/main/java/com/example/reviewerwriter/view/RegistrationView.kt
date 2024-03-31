@@ -46,8 +46,10 @@ import com.example.reviewerwriter.viewModel.RegistrationViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationView (context: Context, onClick: () -> Unit){
-    val registrationViewModel = RegistrationViewModel()
+fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
+    val registrationViewModel = remember {
+        RegistrationViewModel()
+    }
 
     // Состояние для полей кнопок
     val usernameTextField = remember { mutableStateOf("") }
@@ -63,7 +65,7 @@ fun RegistrationView (context: Context, onClick: () -> Unit){
 
     //отслеживание
     ObserveToastMessage(registrationViewModel, context)
-    ObserveNavigation(registrationViewModel, onClick)
+    ObserveNavigation(registrationViewModel, onNavigateTo)
 
     Scaffold{
         // размещение элементов на экране
@@ -178,8 +180,10 @@ fun RegistrationView (context: Context, onClick: () -> Unit){
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
     RegistrationView(context = LocalContext.current, onClick = {})
 }
+*/

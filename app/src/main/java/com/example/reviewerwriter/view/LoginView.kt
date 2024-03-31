@@ -29,10 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.reviewerwriter.R
 import com.example.reviewerwriter.ui.theme.DarkMuted
@@ -47,8 +45,10 @@ import com.example.reviewerwriter.viewModel.LoginViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(context: Context, onClick: () -> Unit) {
-    val loginViewModel = LoginViewModel()
+fun LoginView(context: Context, onNavigateTo: (route : String) -> Unit) {
+    val loginViewModel = remember {
+        LoginViewModel()
+    }
 
     // Состояние для полей кнопок
     val usernameTextField = remember { mutableStateOf("") }
@@ -62,7 +62,7 @@ fun LoginView(context: Context, onClick: () -> Unit) {
 
     //отслеживание
     ObserveToastMessage(loginViewModel, context)
-    ObserveNavigation(loginViewModel, onClick)
+    ObserveNavigation(loginViewModel, onNavigateTo)
 
     Scaffold(
 
@@ -162,9 +162,11 @@ fun LoginView(context: Context, onClick: () -> Unit) {
 }
 
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
-    LoginView(context = LocalContext.current, onClick = {})
+    LoginView(context = LocalContext.current, onNavigateTo: (route : String) -> Unit)
 
 }
+*/

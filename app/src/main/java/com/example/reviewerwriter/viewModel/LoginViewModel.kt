@@ -8,30 +8,31 @@ import androidx.lifecycle.MutableLiveData
 import com.example.reviewerwriter.model.LoginRequest
 import com.example.reviewerwriter.retrofit.NetworkModule
 import com.example.reviewerwriter.utils.ObserveNavigationInterface
+import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Objects
 
 class LoginViewModel : showToastMessage , ObserveNavigationInterface{
-
 
     // для вывода сообщение
     override val _showToastMessage = MutableLiveData<String>()
 
     // LiveData для навигации
-    override val _navigateTo = MutableLiveData<Boolean>()
+    override var _navigateTo = MutableLiveData<String>()
 
     override fun onTextButtonSignInClick(){
         /*TODO: сделать визуализацию(заглушку) нажатия*/
     }
     fun onTextButtonSignUpClick(){
         /*TODO:  сделать визуализацию нажатия*/
-        _navigateTo.value = true
+        _navigateTo.value = Screens.REGISTRATION_SCREEN
     }
     override fun onNavigationDone() {
-        _navigateTo.value = null
+        _navigateTo.value = ""
     }
     override fun onshowToastMessageDone(){
         _showToastMessage.value = ""
@@ -56,8 +57,10 @@ class LoginViewModel : showToastMessage , ObserveNavigationInterface{
                         )
                     )
                     /*TODO: сделать проверку на null для errorInfo*/
-                    Log.w("myRequest", loginResponses.errorInfo)
+                    //Log.w("myRequest", loginResponses.errorInfo)
                     /*todo: обработка данных с бэка*/
+
+
                 }
                 catch(e: Exception){
                     // вызов тоста в основном потоке
@@ -66,6 +69,7 @@ class LoginViewModel : showToastMessage , ObserveNavigationInterface{
                     }
                 }
             }
+            _navigateTo.value = Screens.MAIN_SCREEN
         }
         else{
             Log.w("ЛОГ1", "Не все поля заполнены")
