@@ -2,37 +2,28 @@ package com.example.reviewerwriter.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavController
 import com.example.reviewerwriter.model.LoginRequest
 import com.example.reviewerwriter.retrofit.NetworkModule
-import com.example.reviewerwriter.utils.ObserveNavigationInterface
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Objects
 
-class LoginViewModel : showToastMessage , ObserveNavigationInterface{
-
+class LoginViewModel (navController: NavController): showToastMessage{
+    val navController = navController
     // для вывода сообщение
     override val _showToastMessage = MutableLiveData<String>()
 
-    // LiveData для навигации
-    override var _navigateTo = MutableLiveData<String>()
-
-    override fun onTextButtonSignInClick(){
+    fun onTextButtonSignInClick(){
         /*TODO: сделать визуализацию(заглушку) нажатия*/
     }
     fun onTextButtonSignUpClick(){
         /*TODO:  сделать визуализацию нажатия*/
-        _navigateTo.value = Screens.REGISTRATION_SCREEN
-    }
-    override fun onNavigationDone() {
-        _navigateTo.value = ""
+        navController.navigate(Screens.REGISTRATION_SCREEN)
     }
     override fun onshowToastMessageDone(){
         _showToastMessage.value = ""
@@ -41,6 +32,8 @@ class LoginViewModel : showToastMessage , ObserveNavigationInterface{
                             passwordTextField: MutableState<String>){
         // проверка на значения в полях
         if(checkFieldForText(usernameTextField.value) && checkFieldForText(passwordTextField.value)){
+            /*TODO: проверка на отсутствие спец символов*/
+
             // создание экземпляров NetworkModule и Retrofit перед вызовом provideMainApi
             val networkModule = NetworkModule()
             val client = networkModule.provideOkHttpClient()
@@ -69,7 +62,7 @@ class LoginViewModel : showToastMessage , ObserveNavigationInterface{
                     }
                 }
             }
-            _navigateTo.value = Screens.MAIN_SCREEN
+            navController.navigate(Screens.MAIN_SCREEN)
         }
         else{
             Log.w("ЛОГ1", "Не все поля заполнены")

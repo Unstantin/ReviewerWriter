@@ -2,14 +2,14 @@ package com.example.reviewerwriter.view.ui_components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.BackupTable
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.BackupTable
+import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -25,51 +25,52 @@ import androidx.compose.ui.graphics.Color
 import com.example.reviewerwriter.ui.theme.DarkMuted
 import com.example.reviewerwriter.ui.theme.DarkVibrant
 import com.example.reviewerwriter.ui.theme.LightVibrant
+import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.viewModel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainBottomNav(mainViewModel: MainViewModel) {
-    /*BottomAppBar(
-        containerColor = DarkMuted,
-        contentColor = Vibrant
-    ) {
-        *//*TODO: нижние элементы*//*
-    }*/
+
     val items = listOf(
         BottomNavigationItem(
             title = "Домой",
             selectedIcon = Icons.Default.Home,
             unselectedIcon = Icons.Outlined.Home,
-            hasNews = false
+            hasNews = false,
+            screen = Screens.MAIN_SCREEN
         ),
         BottomNavigationItem(
             title = "чаты",
             selectedIcon = Icons.Default.Person,
             unselectedIcon = Icons.Outlined.Person,
-            hasNews = false
+            hasNews = false,
+            screen = Screens.MAIN_SCREEN
         ),
         BottomNavigationItem(
             title = "Создать",
             selectedIcon = Icons.Default.AddCircle,
             unselectedIcon = Icons.Outlined.AddCircle,
-            hasNews = false
+            hasNews = false,
+            screen = Screens.MAIN_SCREEN
         ),
         BottomNavigationItem(
             title = "Сервисы",
-            selectedIcon = Icons.Default.Lock,
-            unselectedIcon = Icons.Outlined.Lock,
-            hasNews = false
+            selectedIcon = Icons.Default.BackupTable,
+            unselectedIcon = Icons.Outlined.BackupTable,
+            hasNews = false,
+            screen = Screens.MAIN_SCREEN
         ),
         BottomNavigationItem(
-            title = "Библиотека",
-            selectedIcon = Icons.Default.List,
-            unselectedIcon = Icons.Outlined.List,
-            hasNews = false
+            title = "Библио",
+            selectedIcon = Icons.Default.Book,
+            unselectedIcon = Icons.Outlined.Book,
+            hasNews = false,
+            screen = Screens.MAIN_SCREEN
         )
     )
 
-    var selectedItemIndex = remember {
+    val selectedItemIndex = remember {
         mutableStateOf(0)
     }
     NavigationBar(
@@ -81,18 +82,23 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
                 selected = selectedItemIndex.value == index,
                 onClick = {
                     selectedItemIndex.value = index
-                    //navController.navigate(item.title)
-                    /*TODO*/
+                    mainViewModel.onNavigationBarItemClick(item)
                 },
                 label = {
-                        Text(item.title, color = if (selectedItemIndex.value == index) LightVibrant else DarkVibrant)
+                        Text(
+                            item.title,
+                            color = if (selectedItemIndex.value == index) LightVibrant else DarkVibrant
+                        )
                 },
                 icon = {
                     BadgedBox(
                         badge = {
                             if(item.badgeCount != null){
                                 Badge {
-                                    Text(text = item.badgeCount.toString(), color = if (selectedItemIndex.value == index) LightVibrant else DarkVibrant)
+                                    Text(
+                                        text = item.badgeCount.toString(),
+                                        color = if (selectedItemIndex.value == index) LightVibrant else DarkVibrant
+                                    )
                                 }
                             } else if(item.hasNews){
                                 Badge()
