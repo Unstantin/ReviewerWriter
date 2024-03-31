@@ -63,10 +63,21 @@ fun RegistrationView (context: Context, onNavigateTo: (route: String) -> Unit){
     val confirmPasswordTextFieldPlaceholder = "Confirm Password"
     val mainButtonText = "SIGN UP"
 
+    // Состояние для полей кнопок
+    val usernameTextField = remember { mutableStateOf("") }
+    val passwordTextField = remember { mutableStateOf("") }
+    val confirmPasswordTextField = remember { mutableStateOf("") }
+    val textButtonSignIn = mutableStateOf("SIGN IN")
+    val textButtonSignUp = mutableStateOf("SIGN UP")
+    val mainText = "ReviewerWriterApp"
+    val usernameTextFieldPlaceholder = "Username"
+    val passwordTextFieldPlaceholder = "Password"
+    val confirmPasswordTextFieldPlaceholder = "Confirm Password"
+    val mainButtonText = "SIGN UP"
+
     //отслеживание
     ObserveToastMessage(registrationViewModel, context)
     ObserveNavigation(registrationViewModel, onNavigateTo)
-
     Scaffold{
         // размещение элементов на экране
         Column(

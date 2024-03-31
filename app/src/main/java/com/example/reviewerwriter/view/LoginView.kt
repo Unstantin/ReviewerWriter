@@ -67,7 +67,6 @@ fun LoginView(context: Context, onNavigateTo: (route : String) -> Unit) {
     Scaffold(
 
     ) {
-
         // размещение элементов на экране
         Column(
             modifier = Modifier
@@ -161,12 +160,10 @@ fun LoginView(context: Context, onNavigateTo: (route : String) -> Unit) {
     }
 }
 
-
-/*
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
     LoginView(context = LocalContext.current, onNavigateTo: (route : String) -> Unit)
 
 }
-*/
+
