@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.reviewerwriter.model.RegistrationRequest
 import com.example.reviewerwriter.retrofit.NetworkModule
 import com.example.reviewerwriter.utils.ObserveNavigationInterface
+import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,15 +21,15 @@ class RegistrationViewModel : showToastMessage , ObserveNavigationInterface{
     override val _showToastMessage = MutableLiveData<String>()
 
     // LiveData для навигации
-    override val _navigateTo = MutableLiveData<Boolean>()
+    override val _navigateTo = MutableLiveData<String>()
     override fun onTextButtonSignInClick(){
-        _navigateTo.value = true
+        _navigateTo.value = Screens.LOGIN_SCREEN
     }
     fun onTextButtonSignUpClick(){
         /*todo:*/
     }
     override fun onNavigationDone() {
-        _navigateTo.value = null
+        _navigateTo.value = ""
     }
 
     override fun onshowToastMessageDone(){

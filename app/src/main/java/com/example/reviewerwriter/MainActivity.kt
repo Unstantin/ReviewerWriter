@@ -17,6 +17,7 @@ import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.view.LoginView
 import com.example.reviewerwriter.view.RegistrationView
+import com.example.reviewerwriter.view.MainView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,18 +37,19 @@ class MainActivity : ComponentActivity() {
                     //запуск активности экрана входа
                     NavHost(
                         navController = navController,
-                        startDestination = Screens.LOGIN_SCREEN
+                        startDestination = Screens.MAIN_SCREEN
                     ) {
                         composable(Screens.LOGIN_SCREEN) {
-                            LoginView(context = this@MainActivity){
-                                navController.navigate(Screens.REGISTRATION_SCREEN)
+                            LoginView(context = this@MainActivity
+                            ){
+                                navController.navigate(it)
                             }
                         }
                         composable(Screens.REGISTRATION_SCREEN) {
                             RegistrationView(context = this@MainActivity){
-                                navController.navigate(Screens.LOGIN_SCREEN){
+                                navController.navigate(it){
                                     // очистить весь стек экранов кроме указанного (LOGIN_SCREEN)
-                                    popUpTo(Screens.LOGIN_SCREEN){
+                                    popUpTo(it){
                                         // удаляет из стека так же указанный экран
                                         // благодаря чему при нажатии кнопки "назад" приложение закроется
                                         inclusive = true
@@ -55,7 +57,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        /*todo: вариантивность переходов в экраны
+                        composable(Screens.MAIN_SCREEN){
+                            MainView(context = this@MainActivity)
+                        }
+                        /*TODO: вариантивность переходов в экраны
                            (один экран имеет возможность открыть несколько других)*/
                     }
                 }
