@@ -21,10 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
-import com.example.reviewerwriter.ui.theme.DarkMuted
-import com.example.reviewerwriter.ui.theme.DarkVibrant
-import com.example.reviewerwriter.ui.theme.LightVibrant
+import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.viewModel.MainViewModel
 
@@ -73,50 +70,47 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
     val selectedItemIndex = remember {
         mutableStateOf(0)
     }
-    NavigationBar(
-        containerColor = DarkMuted,
-        contentColor = LightVibrant
-    ) {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                selected = selectedItemIndex.value == index,
-                onClick = {
-                    selectedItemIndex.value = index
-                    mainViewModel.onNavigationBarItemClick(item)
-                },
-                label = {
+    ReviewerWriterTheme {
+        NavigationBar(
+        ) {
+            items.forEachIndexed { index, item ->
+                NavigationBarItem(
+                    selected = selectedItemIndex.value == index,
+                    onClick = {
+                        selectedItemIndex.value = index
+                        mainViewModel.onNavigationBarItemClick(item)
+                    },
+                    label = {
                         Text(
                             item.title,
-                            color = if (selectedItemIndex.value == index) LightVibrant else DarkVibrant
                         )
-                },
-                icon = {
-                    BadgedBox(
-                        badge = {
-                            if(item.badgeCount != null){
-                                Badge {
-                                    Text(
-                                        text = item.badgeCount.toString(),
-                                        color = if (selectedItemIndex.value == index) LightVibrant else DarkVibrant
-                                    )
+                    },
+                    icon = {
+                        BadgedBox(
+                            badge = {
+                                if (item.badgeCount != null) {
+                                    Badge {
+                                        Text(
+                                            text = item.badgeCount.toString(),
+                                        )
+                                    }
+                                } else if (item.hasNews) {
+                                    Badge()
                                 }
-                            } else if(item.hasNews){
-                                Badge()
                             }
+                        ) {
+                            Icon(
+                                imageVector = if (index == selectedItemIndex.value) {
+                                    item.selectedIcon
+                                } else {
+                                    item.unselectedIcon
+                                },
+                                contentDescription = item.title,
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = if (index == selectedItemIndex.value) {
-                                item.selectedIcon
-                            } else {
-                                item.unselectedIcon
-                            },
-                            contentDescription = item.title,
-                            tint = if (selectedItemIndex.value == index) Color.Black else DarkVibrant
-                        )
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

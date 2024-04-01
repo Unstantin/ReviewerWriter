@@ -29,8 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.reviewerwriter.ui.theme.Muted
-import com.example.reviewerwriter.ui.theme.Vibrant
+import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.view.ui_components.DrawerItem
 import com.example.reviewerwriter.view.ui_components.MyScaffold
@@ -69,55 +68,62 @@ fun MainView(context : Context, navController: NavController){
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = mainViewModel.drawerState.value)
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        scrimColor = Color.Black.copy(alpha = 0.7f),
-        modifier = Modifier
-            .background(Color.Red)
-            .fillMaxWidth(),
+    ReviewerWriterTheme {
 
-        drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier
-                    .requiredWidth(300.dp)
-                    .fillMaxWidth()
-            ) {
-                /*TODO: добавить информацию о пользователе и мб фото профиля на фон */
-                /*TODO: разобраться с цветом фона*/
-                Spacer(modifier = Modifier.height(150.dp).background(Muted))
-                items.forEach { item ->
-                    NavigationDrawerItem(
-                        icon = {
-                               Icon(
-                                   imageVector = item.image,
-                                   contentDescription = item.title,
-                                   tint = Vibrant,
-                                   modifier = Modifier.background(Muted)
-                               )
-                        },
-                        label = {
-                            Text(
-                                text = item.title,
-                                color = Vibrant,
-                                modifier = Modifier.background(Muted)
-                            )
-                        },
-                        selected = false,
-                        onClick = {
-                            navController.navigate(item.screen)
-                            scope.launch {
-                                drawerState.close()
-                            }
-                            /*TODO: перенести в model*/
-                        }
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            scrimColor = Color.Black.copy(alpha = 0.7f),
+            modifier = Modifier
+                .background(Color.Red)
+                .fillMaxWidth(),
+
+            drawerContent = {
+                ModalDrawerSheet(
+                    modifier = Modifier
+                        .requiredWidth(300.dp)
+                        .fillMaxWidth()
+                ) {
+                    /*TODO: добавить информацию о пользователе и мб фото профиля на фон */
+                    /*TODO: разобраться с цветом фона*/
+                    Spacer(
+                        modifier = Modifier
+                            .height(150.dp)
+                        //.background(Muted)
                     )
+                    items.forEach { item ->
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = item.image,
+                                    contentDescription = item.title,
+                                    //tint = Vibrant,
+                                    //modifier = Modifier.background(Muted)
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = item.title,
+                                    //color = Vibrant,
+                                    //modifier = Modifier.background(Muted)
+                                )
+                            },
+                            selected = false,
+                            onClick = {
+                                navController.navigate(item.screen)
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                                /*TODO: перенести в model*/
+                            }
+                        )
+                    }
                 }
+            },
+            content = {
+                MyScaffold(mainViewModel = mainViewModel, drawerState)
             }
-        },
-        content = {
-            MyScaffold(mainViewModel = mainViewModel, drawerState)
-        }
-    )
+        )
+    }
 }
 
 

@@ -12,8 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import com.example.reviewerwriter.ui.theme.DarkMuted
-import com.example.reviewerwriter.ui.theme.Vibrant
+import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -22,39 +21,37 @@ import kotlinx.coroutines.launch
 fun MainTopBar(mainViewModel : MainViewModel, drawerState: DrawerState){
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    CenterAlignedTopAppBar(
-        title = { Text(text = "Home") },
-        navigationIcon = {
-             IconButton(
-                 onClick = {
-                     scope.launch {
-                         drawerState.open()
-                     }
-                     /*TODO: в model мб*/
-                }
-             ) 
-             {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Menu",
+    ReviewerWriterTheme {
+        CenterAlignedTopAppBar(
+            title = { Text(text = "Home") },
+            navigationIcon = {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                        /*TODO: в model мб*/
+                    }
                 )
-             }
-        },
-        actions = {
-                  IconButton(onClick = { /*TODO*/ }) {
-                      Icon(
-                          imageVector = Icons.Default.Search,
-                          contentDescription = "Поиск",
-                      )
-                      
-                  }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = DarkMuted,
-            titleContentColor = Vibrant,
-            navigationIconContentColor = Vibrant
-        ),
-        scrollBehavior = scrollBehavior
-    )
+                {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu",
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Поиск",
+                    )
 
+                }
+            },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            ),
+            scrollBehavior = scrollBehavior
+        )
+    }
 }
