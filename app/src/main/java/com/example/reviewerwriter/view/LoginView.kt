@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
@@ -87,12 +88,13 @@ fun LoginView(context: Context, navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-                    TextButton(onClick = { loginViewModel.onTextButtonSignInClick() }
-                        ) {
+                    TextButton(
+                        onClick = { loginViewModel.onTextButtonSignInClick() },
+                        modifier = Modifier
+                    ) {
                         Text(
                             text = textButtonSignIn.value,
                             modifier = Modifier
-                                .padding(end = 16.dp)
                                 .shadow(
                                     clip = true,
                                     elevation = 15.dp,
@@ -106,14 +108,14 @@ fun LoginView(context: Context, navController: NavController) {
                                     color = if (isSystemInDarkTheme()) SystemInDarkThemeShadow
                                     else SystemInLightThemeShadow
                                 )
-
                         )
                     }
-                    TextButton(onClick = { loginViewModel.onTextButtonSignUpClick() }) {
+                    TextButton(
+                        onClick = { loginViewModel.onTextButtonSignUpClick() }
+                    ) {
                         Text(
                             text = textButtonSignUp.value,
                             modifier = Modifier
-                                .padding(start = 16.dp)
                                 .shadow(
                                     clip = true,
                                     elevation = 15.dp,

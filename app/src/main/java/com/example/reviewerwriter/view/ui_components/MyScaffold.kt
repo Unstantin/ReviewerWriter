@@ -17,13 +17,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.viewModel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyScaffold(mainViewModel: MainViewModel, drawerState: DrawerState){
+fun MyScaffold(mainViewModel: MainViewModel, drawerState: DrawerState, navController: NavController){
     ReviewerWriterTheme {
         Scaffold(
             modifier = Modifier
@@ -32,7 +33,7 @@ fun MyScaffold(mainViewModel: MainViewModel, drawerState: DrawerState){
                 MainTopBar(mainViewModel, drawerState)
             },
             bottomBar = {
-                MainBottomNav(mainViewModel)
+                MainBottomNavView(navController)
             }
         ) { values ->
             LazyColumn(
@@ -58,6 +59,6 @@ private fun GreetingPreview() {
     val fdrawerState: MutableState<DrawerValue> = mutableStateOf(DrawerValue.Closed)
     val drawerState = rememberDrawerState(initialValue = fdrawerState.value)
     val navController = rememberNavController()
-    MyScaffold(MainViewModel(navController), drawerState )
+    MyScaffold(MainViewModel(navController), drawerState,navController )
 }
 

@@ -1,5 +1,6 @@
 package com.example.reviewerwriter.view.ui_components
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.BackupTable
@@ -19,16 +20,19 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
+import com.example.reviewerwriter.utils.NavigationBarItemClickHandler
 import com.example.reviewerwriter.utils.Screens
-import com.example.reviewerwriter.viewModel.MainViewModel
+import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainBottomNav(mainViewModel: MainViewModel) {
-
+fun MainBottomNavView(navController: NavController) {
+    var mainBottomNavViewModel = remember {
+        MainBottomNavViewModel(navController)
+    }
     val items = listOf(
         BottomNavigationItem(
             title = "Домой",
@@ -38,7 +42,7 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
             screen = Screens.MAIN_SCREEN
         ),
         BottomNavigationItem(
-            title = "чаты",
+            title = "Чаты",
             selectedIcon = Icons.Default.Person,
             unselectedIcon = Icons.Outlined.Person,
             hasNews = false,
@@ -49,7 +53,7 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
             selectedIcon = Icons.Default.AddCircle,
             unselectedIcon = Icons.Outlined.AddCircle,
             hasNews = false,
-            screen = Screens.MAIN_SCREEN
+            screen = Screens.REVIEW_CREATING_SCREEN
         ),
         BottomNavigationItem(
             title = "Сервисы",
@@ -67,18 +71,22 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
         )
     )
 
-    val selectedItemIndex = remember {
-        mutableStateOf(0)
-    }
+
     ReviewerWriterTheme {
         NavigationBar(
         ) {
             items.forEachIndexed { index, item ->
                 NavigationBarItem(
-                    selected = selectedItemIndex.value == index,
+                    selected = mainBottomNavViewModel.getMyCurrentScreenIndex() == index,
                     onClick = {
-                        selectedItemIndex.value = index
-                        mainViewModel.onNavigationBarItemClick(item)
+                        Log.w("selectedIndex", "${mainBottomNavViewModel.getMyCurrentScreenIndex()}")
+                        Log.w("index", "${index}")
+
+                        mainBottomNavViewModel.setMyCurrentScreenIndex(index)
+                        Log.w("onClickIndex", "${mainBottomNavViewModel.getMyCurrentScreenIndex()}")
+                        mainBottomNavViewModel.onNavigationBarItemClick(item)
+                        Log.w("newSelectedIndex", "${mainBottomNavViewModel.getMyCurrentScreenIndex()}")
+
                     },
                     label = {
                         Text(
@@ -100,7 +108,7 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
                             }
                         ) {
                             Icon(
-                                imageVector = if (index == selectedItemIndex.value) {
+                                imageVector = if (index == mainBottomNavViewModel.getMyCurrentScreenIndex()) {
                                     item.selectedIcon
                                 } else {
                                     item.unselectedIcon
@@ -108,7 +116,8 @@ fun MainBottomNav(mainViewModel: MainViewModel) {
                                 contentDescription = item.title,
                             )
                         }
-                    }
+                    },
+
                 )
             }
         }

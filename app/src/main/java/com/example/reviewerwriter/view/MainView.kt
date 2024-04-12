@@ -69,7 +69,6 @@ fun MainView(context : Context, navController: NavController){
     val drawerState = rememberDrawerState(initialValue = mainViewModel.drawerState.value)
 
     ReviewerWriterTheme {
-
         ModalNavigationDrawer(
             drawerState = drawerState,
             scrimColor = Color.Black.copy(alpha = 0.7f),
@@ -88,7 +87,6 @@ fun MainView(context : Context, navController: NavController){
                     Spacer(
                         modifier = Modifier
                             .height(150.dp)
-                        //.background(Muted)
                     )
                     items.forEach { item ->
                         NavigationDrawerItem(
@@ -96,15 +94,11 @@ fun MainView(context : Context, navController: NavController){
                                 Icon(
                                     imageVector = item.image,
                                     contentDescription = item.title,
-                                    //tint = Vibrant,
-                                    //modifier = Modifier.background(Muted)
                                 )
                             },
                             label = {
                                 Text(
                                     text = item.title,
-                                    //color = Vibrant,
-                                    //modifier = Modifier.background(Muted)
                                 )
                             },
                             selected = false,
@@ -120,7 +114,7 @@ fun MainView(context : Context, navController: NavController){
                 }
             },
             content = {
-                MyScaffold(mainViewModel = mainViewModel, drawerState)
+                MyScaffold(mainViewModel = mainViewModel, drawerState, navController)
             }
         )
     }
