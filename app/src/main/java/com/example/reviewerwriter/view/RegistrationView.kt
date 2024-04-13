@@ -2,6 +2,7 @@ package com.example.reviewerwriter.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -46,17 +47,14 @@ import com.example.reviewerwriter.viewModel.RegistrationViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationView (context: Context, navController: NavController){
-    val registrationViewModel = remember {
-        RegistrationViewModel(navController)
-    }
+fun RegistrationView (registrationViewModel: RegistrationViewModel, context: Context, navController: NavController){
 
     // Состояние для полей кнопок
-    val usernameTextField = remember { mutableStateOf("") }
-    val passwordTextField = remember { mutableStateOf("") }
-    val confirmPasswordTextField = remember { mutableStateOf("") }
-    val textButtonSignIn = mutableStateOf("SIGN IN")
-    val textButtonSignUp = mutableStateOf("SIGN UP")
+    val usernameTextField = registrationViewModel.usernameTextField
+    val passwordTextField = registrationViewModel.passwordTextField
+    val confirmPasswordTextField = registrationViewModel.confirmPasswordTextField
+    val textButtonSignIn = "SIGN IN"
+    val textButtonSignUp = "SIGN UP"
     val mainText = "ReviewerWriterApp"
     val usernameTextFieldPlaceholder = "Username"
     val passwordTextFieldPlaceholder = "Password"
@@ -87,11 +85,10 @@ fun RegistrationView (context: Context, navController: NavController){
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-                    TextButton(onClick = { registrationViewModel.onTextButtonSignInClick() }) {
+                    TextButton(onClick = { registrationViewModel.onTextButtonSignInClick(navController) }) {
                         Text(
-                            text = textButtonSignIn.value,
+                            text = textButtonSignIn,
                             modifier = Modifier
-                                .padding(end = 16.dp)
                                 .shadow(
                                     clip = true,
                                     elevation = 15.dp,
@@ -109,9 +106,8 @@ fun RegistrationView (context: Context, navController: NavController){
                     }
                     TextButton(onClick = { registrationViewModel.onTextButtonSignUpClick() }) {
                         Text(
-                            text = textButtonSignUp.value,
+                            text = textButtonSignUp,
                             modifier = Modifier
-                                .padding(start = 16.dp)
                                 .shadow(
                                     clip = true,
                                     elevation = 15.dp,
@@ -188,7 +184,8 @@ fun RegistrationView (context: Context, navController: NavController){
                         registrationViewModel.onButtonSignUPClick(
                             usernameTextField,
                             passwordTextField,
-                            confirmPasswordTextField
+                            confirmPasswordTextField,
+                            navController
                         )
                     },
                     modifier = Modifier
@@ -204,9 +201,11 @@ fun RegistrationView (context: Context, navController: NavController){
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
         val navController = rememberNavController()
     RegistrationView(context = LocalContext.current, navController)
 }
+*/

@@ -1,6 +1,5 @@
 package com.example.reviewerwriter
 
-import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +22,8 @@ import com.example.reviewerwriter.view.LoginView
 import com.example.reviewerwriter.view.RegistrationView
 import com.example.reviewerwriter.view.MainView
 import com.example.reviewerwriter.view.ReviewCreatingView
+import com.example.reviewerwriter.viewModel.LoginViewModel
+import com.example.reviewerwriter.viewModel.RegistrationViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
@@ -34,8 +36,9 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(activity) {
                 activity.window.setBackgroundBlurRadius(15)
             }
-
-
+            // объекты viewModel
+            val loginViewModel: LoginViewModel = viewModel()
+            val registrationViewModel: RegistrationViewModel = viewModel()
 
             ReviewerWriterTheme {
                 // A surface container using the 'background' color from the theme
@@ -51,18 +54,23 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screens.LOGIN_SCREEN
                     ) {
                         composable(Screens.LOGIN_SCREEN) {
-                            LoginView(context = this@MainActivity, navController)
+                            LoginView(loginViewModel, this@MainActivity, navController)
                         }
 
                         composable(Screens.REGISTRATION_SCREEN) {
-                            RegistrationView(context = this@MainActivity, navController)
+                            RegistrationView(
+                                registrationViewModel,
+                                this@MainActivity,
+                                navController
+                            )
                         }
 
-                        composable(Screens.MAIN_SCREEN){
+                        composable(Screens.MAIN_SCREEN) {
                             MainView(context = this@MainActivity, navController)
                         }
-                        composable(Screens.REVIEW_CREATING_SCREEN){
-                            ReviewCreatingView(context = this@MainActivity,navController)
+
+                        composable(Screens.REVIEW_CREATING_SCREEN) {
+                            ReviewCreatingView(context = this@MainActivity, navController)
                         }
                         /*TODO: вариантивность переходов в экраны
                            (один экран имеет возможность открыть несколько других)*/

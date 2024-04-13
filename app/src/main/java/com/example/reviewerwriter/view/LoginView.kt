@@ -2,6 +2,7 @@ package com.example.reviewerwriter.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -44,21 +45,19 @@ import com.example.reviewerwriter.ui.theme.SystemInLightThemeShadow
 import com.example.reviewerwriter.utils.ObserveToastMessage
 import com.example.reviewerwriter.viewModel.LoginViewModel
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState",
+@SuppressLint(
+    "UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState",
     "InvalidColorHexValue"
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(context: Context, navController: NavController) {
-    val loginViewModel = remember {
-        LoginViewModel(navController)
-    }
+fun LoginView(loginViewModel: LoginViewModel, context: Context, navController: NavController) {
 
     // Состояние для полей кнопок
-    val usernameTextField = remember { mutableStateOf("") }
-    val passwordTextField = remember { mutableStateOf("") }
-    val textButtonSignIn = mutableStateOf("SIGN IN")
-    val textButtonSignUp = mutableStateOf("SIGN UP")
+    val usernameTextField = loginViewModel.usernameTextField
+    val passwordTextField = loginViewModel.passwordTextField
+    val textButtonSignIn = "SIGN IN"
+    val textButtonSignUp = "SIGN UP"
     val mainText = "ReviewerWriterApp"
     val usernameTextFieldPlaceholder = "Username"
     val passwordTextFieldPlaceholder = "Password"
@@ -93,7 +92,7 @@ fun LoginView(context: Context, navController: NavController) {
                         modifier = Modifier
                     ) {
                         Text(
-                            text = textButtonSignIn.value,
+                            text = textButtonSignIn,
                             modifier = Modifier
                                 .shadow(
                                     clip = true,
@@ -111,10 +110,10 @@ fun LoginView(context: Context, navController: NavController) {
                         )
                     }
                     TextButton(
-                        onClick = { loginViewModel.onTextButtonSignUpClick() }
+                        onClick = { loginViewModel.onTextButtonSignUpClick(navController) }
                     ) {
                         Text(
-                            text = textButtonSignUp.value,
+                            text = textButtonSignUp,
                             modifier = Modifier
                                 .shadow(
                                     clip = true,
@@ -170,7 +169,8 @@ fun LoginView(context: Context, navController: NavController) {
                     onClick = {
                         loginViewModel.onButtonSignInClick(
                             usernameTextField,
-                            passwordTextField
+                            passwordTextField,
+                            navController
                         )
                     },
                     modifier = Modifier
@@ -187,11 +187,11 @@ fun LoginView(context: Context, navController: NavController) {
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
     val navController = rememberNavController()
     LoginView(context = LocalContext.current,navController )
 
-}
+}*/
 

@@ -106,10 +106,10 @@ fun ReviewerWriterTheme(
         content = content
     )
 }
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
     val navController = rememberNavController()
     LoginView(context = LocalContext.current,navController )
 
-}
+}*/
