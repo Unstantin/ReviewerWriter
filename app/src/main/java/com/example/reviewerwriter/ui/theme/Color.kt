@@ -2,19 +2,19 @@ package com.example.reviewerwriter.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Green10 = Color( 0xff003314)
-val Green20 = Color( 0xff006627)
-val Green30 = Color( 0xff00993b)
-val Green40 = Color( 0xff00cc4e)
-val Green80 = Color( 0xff99ffc0)
-val Green90 = Color( 0xffccffe0)
+val Green10 = Color(0xff003314)
+val Green20 = Color(0xff006627)
+val Green30 = Color(0xff00993b)
+val Green40 = Color(0xff00cc4e)
+val Green80 = Color(0xff99ffc0)
+val Green90 = Color(0xffccffe0)
 
-val Red10 = Color( 0xFF410001)
-val Red20 = Color( 0xFF680003)
-val Red30 = Color( 0xFF930006)
-val Red40 = Color( 0xFFba1b1b)
-val Red80 = Color( 0xFFffb4a9)
-val Red90 = Color( 0xFFFFDAD4)
+val Red10 = Color(0xFF410001)
+val Red20 = Color(0xFF680003)
+val Red30 = Color(0xFF930006)
+val Red40 = Color(0xFFba1b1b)
+val Red80 = Color(0xFFffb4a9)
+val Red90 = Color(0xFFFFDAD4)
 
 val Brown10 = Color(0xFF1c1717)
 val Brown20 = Color(0xFF392d2d)

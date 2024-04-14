@@ -23,7 +23,10 @@ import com.example.reviewerwriter.view.RegistrationView
 import com.example.reviewerwriter.view.MainView
 import com.example.reviewerwriter.view.ReviewCreatingView
 import com.example.reviewerwriter.viewModel.LoginViewModel
+import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
+import com.example.reviewerwriter.viewModel.MainViewModel
 import com.example.reviewerwriter.viewModel.RegistrationViewModel
+import com.example.reviewerwriter.viewModel.ReviewCreatingViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
@@ -39,6 +42,9 @@ class MainActivity : ComponentActivity() {
             // объекты viewModel
             val loginViewModel: LoginViewModel = viewModel()
             val registrationViewModel: RegistrationViewModel = viewModel()
+            val mainBottomNavViewModel: MainBottomNavViewModel = viewModel()
+            val mainViewModel: MainViewModel = viewModel()
+            val reviewCreatingViewModel: ReviewCreatingViewModel = viewModel()
 
             ReviewerWriterTheme {
                 // A surface container using the 'background' color from the theme
@@ -66,11 +72,21 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screens.MAIN_SCREEN) {
-                            MainView(context = this@MainActivity, navController)
+                            MainView(
+                                mainViewModel,
+                                mainBottomNavViewModel,
+                                this@MainActivity,
+                                navController
+                            )
                         }
 
                         composable(Screens.REVIEW_CREATING_SCREEN) {
-                            ReviewCreatingView(context = this@MainActivity, navController)
+                            ReviewCreatingView(
+                                reviewCreatingViewModel,
+                                mainBottomNavViewModel,
+                                this@MainActivity,
+                                navController
+                            )
                         }
                         /*TODO: вариантивность переходов в экраны
                            (один экран имеет возможность открыть несколько других)*/

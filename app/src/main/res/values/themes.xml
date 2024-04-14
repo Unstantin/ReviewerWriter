@@ -2,5 +2,6 @@
 <resources>
     <style name="Theme.ReviewerWriter" parent="android:Theme.Material.Light.NoActionBar">
         <!--<item name="android:windowBackground">@color/background</item>-->
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>

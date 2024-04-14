@@ -20,29 +20,24 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.view.ui_components.DrawerItem
 import com.example.reviewerwriter.view.ui_components.MyScaffold
+import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
 import com.example.reviewerwriter.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(context : Context, navController: NavController){
-    val mainViewModel = remember {
-        MainViewModel(navController)
-    }
+fun MainView(mainViewModel : MainViewModel,mainBottomNavViewModel:MainBottomNavViewModel, context: Context, navController: NavController) {
+
     val items = listOf(
         DrawerItem(
             Icons.Default.Settings,
@@ -83,7 +78,6 @@ fun MainView(context : Context, navController: NavController){
                         .fillMaxWidth()
                 ) {
                     /*TODO: добавить информацию о пользователе и мб фото профиля на фон */
-                    /*TODO: разобраться с цветом фона*/
                     Spacer(
                         modifier = Modifier
                             .height(150.dp)
@@ -114,16 +108,16 @@ fun MainView(context : Context, navController: NavController){
                 }
             },
             content = {
-                MyScaffold(mainViewModel = mainViewModel, drawerState, navController)
+                MyScaffold(mainViewModel,mainBottomNavViewModel, drawerState, navController)
             }
         )
     }
 }
 
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() {
     val navController = rememberNavController()
     MainView(context = LocalContext.current, navController)
-}
+}*/

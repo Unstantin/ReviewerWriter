@@ -1,6 +1,5 @@
 package com.example.reviewerwriter.view.ui_components
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.BackupTable
@@ -20,19 +19,17 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
-import com.example.reviewerwriter.utils.NavigationBarItemClickHandler
 import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainBottomNavView(navController: NavController) {
-    var mainBottomNavViewModel = remember {
-        MainBottomNavViewModel(navController)
-    }
+fun MainBottomNavView(
+    mainBottomNavViewModel: MainBottomNavViewModel,
+    navController: NavController
+) {
     val items = listOf(
         BottomNavigationItem(
             title = "Домой",
@@ -79,14 +76,8 @@ fun MainBottomNavView(navController: NavController) {
                 NavigationBarItem(
                     selected = mainBottomNavViewModel.getMyCurrentScreenIndex() == index,
                     onClick = {
-                        Log.w("selectedIndex", "${mainBottomNavViewModel.getMyCurrentScreenIndex()}")
-                        Log.w("index", "${index}")
-
                         mainBottomNavViewModel.setMyCurrentScreenIndex(index)
-                        Log.w("onClickIndex", "${mainBottomNavViewModel.getMyCurrentScreenIndex()}")
-                        mainBottomNavViewModel.onNavigationBarItemClick(item)
-                        Log.w("newSelectedIndex", "${mainBottomNavViewModel.getMyCurrentScreenIndex()}")
-
+                        mainBottomNavViewModel.onNavigationBarItemClick(item, navController)
                     },
                     label = {
                         Text(
@@ -118,7 +109,7 @@ fun MainBottomNavView(navController: NavController) {
                         }
                     },
 
-                )
+                    )
             }
         }
     }
