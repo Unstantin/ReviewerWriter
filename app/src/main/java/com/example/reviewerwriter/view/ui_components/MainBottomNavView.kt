@@ -57,7 +57,7 @@ fun MainBottomNavView(
             selectedIcon = Icons.Default.BackupTable,
             unselectedIcon = Icons.Outlined.BackupTable,
             hasNews = false,
-            screen = Screens.MAIN_SCREEN
+            screen = Screens.SERVICES_SCREEN
         ),
         BottomNavigationItem(
             title = "Библио",

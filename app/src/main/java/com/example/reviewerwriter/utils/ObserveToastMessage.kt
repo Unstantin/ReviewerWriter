@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
-fun ObserveToastMessage(ViewModel : showToastMessage, context: Context) {
+fun ObserveToastMessage(viewModel : showToastMessage, context: Context) {
     // отслеживание и вывод ошибок
-    ViewModel.showToastMessage.observeAsState().value?.let { ToastMessage ->
-        if(ToastMessage.trim().isNotEmpty()) {
-            Toast.makeText(context, ToastMessage, Toast.LENGTH_SHORT).show()
-            ViewModel.onshowToastMessageDone()
+    viewModel.showToastMessage.observeAsState().value?.let { toastMessage ->
+        if(toastMessage.trim().isNotEmpty()) {
+            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
+            viewModel.onshowToastMessageDone()
         }
     }
 }

@@ -145,6 +145,7 @@ fun ReviewCreatingView(
                                     },
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
+                                        .padding(8.dp)
                                         .background(
                                             MaterialTheme.colorScheme.surface,
                                             MaterialTheme.shapes.small
@@ -236,6 +237,7 @@ fun ReviewCreatingView(
                     Button(
                         onClick = {
                             //cameraLauncher.launch(null)
+                            /*TODO*/
                         }
                     ) {
                         Text(text = "Сделать фото")

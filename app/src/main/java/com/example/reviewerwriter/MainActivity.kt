@@ -18,15 +18,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.utils.Screens
+import com.example.reviewerwriter.view.CriteriaView
 import com.example.reviewerwriter.view.LoginView
-import com.example.reviewerwriter.view.RegistrationView
 import com.example.reviewerwriter.view.MainView
+import com.example.reviewerwriter.view.RegistrationView
 import com.example.reviewerwriter.view.ReviewCreatingView
+import com.example.reviewerwriter.view.ServiceView
+import com.example.reviewerwriter.view.TagsView
+import com.example.reviewerwriter.viewModel.CriteriaViewModel
 import com.example.reviewerwriter.viewModel.LoginViewModel
 import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
 import com.example.reviewerwriter.viewModel.MainViewModel
 import com.example.reviewerwriter.viewModel.RegistrationViewModel
 import com.example.reviewerwriter.viewModel.ReviewCreatingViewModel
+import com.example.reviewerwriter.viewModel.ServiceViewModel
+import com.example.reviewerwriter.viewModel.TagsViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
@@ -45,6 +51,9 @@ class MainActivity : ComponentActivity() {
             val mainBottomNavViewModel: MainBottomNavViewModel = viewModel()
             val mainViewModel: MainViewModel = viewModel()
             val reviewCreatingViewModel: ReviewCreatingViewModel = viewModel()
+            val serviceViewModel: ServiceViewModel = viewModel()
+            val tagsViewModel: TagsViewModel = viewModel()
+            val criteriaViewModel: CriteriaViewModel = viewModel()
 
             ReviewerWriterTheme {
                 // A surface container using the 'background' color from the theme
@@ -57,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     //запуск активности экрана входа
                     NavHost(
                         navController = navController,
-                        startDestination = Screens.LOGIN_SCREEN
+                        startDestination = Screens.MAIN_SCREEN
                     ) {
                         composable(Screens.LOGIN_SCREEN) {
                             LoginView(loginViewModel, this@MainActivity, navController)
@@ -86,6 +95,33 @@ class MainActivity : ComponentActivity() {
                                 mainBottomNavViewModel,
                                 this@MainActivity,
                                 navController
+                            )
+                        }
+
+                        composable(Screens.SERVICES_SCREEN){
+                            ServiceView(
+                                serviceViewModel = serviceViewModel,
+                                tagsViewModel,
+                                context = this@MainActivity,
+                                navController = navController,
+                                mainBottomNavViewModel = mainBottomNavViewModel
+                            )
+                        }
+
+                        composable(Screens.TAGS_SCREEN){
+                            TagsView(
+                                tagsViewModel = tagsViewModel ,
+                                context = this@MainActivity,
+                                navController = navController,
+                                mainBottomNavViewModel = mainBottomNavViewModel
+                            )
+                        }
+                        composable(Screens.CRITERIA_SCREEN){
+                            CriteriaView(
+                                criteriaViewModel = criteriaViewModel,
+                                context = this@MainActivity,
+                                navController = navController,
+                                mainBottomNavViewModel = mainBottomNavViewModel
                             )
                         }
                         /*TODO: вариантивность переходов в экраны
