@@ -5,14 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.reviewerwriter.utils.showToastMessage
 
-class CriteriaViewModel : ViewModel(), showToastMessage {
+class CriteriaViewModel() : ViewModel(), showToastMessage {
 
     override val _showToastMessage = MutableLiveData<String>()
     val addCriteriaTextField =  mutableStateOf("")
     var сriteriaList = mutableStateOf(listOf<String>(
-        "критерий 1",
-        "критерий 2",
-        "критерий 3"
+
     ))
     override fun onshowToastMessageDone() {
         _showToastMessage.value = ""

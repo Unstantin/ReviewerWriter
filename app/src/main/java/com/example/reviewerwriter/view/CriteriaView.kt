@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -32,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
+import com.example.reviewerwriter.utils.ObserveToastMessage
 import com.example.reviewerwriter.view.ui_components.MainBottomNavView
 import com.example.reviewerwriter.viewModel.CriteriaViewModel
 import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
@@ -49,11 +51,19 @@ fun CriteriaView (
     val addCriteriaTextFieldPlaceholder = "Добавить критерий"
     val сriteriaList = criteriaViewModel.сriteriaList
 
+    ObserveToastMessage(criteriaViewModel, context)
+
     ReviewerWriterTheme {
         Scaffold(
             bottomBar = { MainBottomNavView(mainBottomNavViewModel, navController) },
             topBar = {
-                CenterAlignedTopAppBar(title = { Text(text = "Критерии") })
+                CenterAlignedTopAppBar(
+                    title = { Text(text = "Критерии")},
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Назад")
+                        }
+                })
             }
         ) { values ->
             LazyColumn(
@@ -83,6 +93,7 @@ fun CriteriaView (
                         Button(
                             onClick = {
                                 criteriaViewModel.addCritaria(addCriteriaTextField.value)
+                                addCriteriaTextField.value =""
                             },
                             modifier = Modifier
                                 .padding(8.dp)

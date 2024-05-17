@@ -35,6 +35,7 @@ import com.example.reviewerwriter.viewModel.ServiceViewModel
 import com.example.reviewerwriter.viewModel.TagsViewModel
 
 class MainActivity : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +93,8 @@ class MainActivity : ComponentActivity() {
                         composable(Screens.REVIEW_CREATING_SCREEN) {
                             ReviewCreatingView(
                                 reviewCreatingViewModel,
+                                tagsViewModel,
+                                criteriaViewModel,
                                 mainBottomNavViewModel,
                                 this@MainActivity,
                                 navController
@@ -110,7 +113,8 @@ class MainActivity : ComponentActivity() {
 
                         composable(Screens.TAGS_SCREEN){
                             TagsView(
-                                tagsViewModel = tagsViewModel ,
+                                tagsViewModel = tagsViewModel,
+                                criteriaViewModel = criteriaViewModel,
                                 context = this@MainActivity,
                                 navController = navController,
                                 mainBottomNavViewModel = mainBottomNavViewModel

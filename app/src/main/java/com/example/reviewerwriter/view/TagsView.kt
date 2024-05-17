@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.ripple.rememberRipple
@@ -45,29 +46,42 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
+import com.example.reviewerwriter.utils.ObserveToastMessage
+import com.example.reviewerwriter.utils.Screens
 import com.example.reviewerwriter.view.ui_components.MainBottomNavView
+import com.example.reviewerwriter.viewModel.CriteriaViewModel
 import com.example.reviewerwriter.viewModel.MainBottomNavViewModel
 import com.example.reviewerwriter.viewModel.TagsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TagsView (tagsViewModel: TagsViewModel,
-          context: Context,
-          navController: NavController,
-          mainBottomNavViewModel: MainBottomNavViewModel
+              criteriaViewModel: CriteriaViewModel,
+              context: Context,
+              navController: NavController,
+              mainBottomNavViewModel: MainBottomNavViewModel
 ){
     val addTagTextField = tagsViewModel.addTagTextField
     val addTagTextFieldPlaceholder = "Добавить тег"
-    val criteriaList = tagsViewModel.criteriaList
+    val criteriaList = criteriaViewModel.сriteriaList
     val expanded = tagsViewModel.expanded
     val selectedCriteria = tagsViewModel.selectedCriteria
     val mapTagsCriteria = tagsViewModel.mapTagsCriteria
+
+    ObserveToastMessage(tagsViewModel, context)
 
     ReviewerWriterTheme {
         Scaffold(
             bottomBar = { MainBottomNavView(mainBottomNavViewModel, navController) },
             topBar = {
-                CenterAlignedTopAppBar(title = { Text(text = "Теги") })
+                CenterAlignedTopAppBar(
+                    title = { Text(text = "Теги") },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Назад")
+                        }
+                    }
+                )
             }
         ) { values ->
             LazyColumn(
@@ -98,17 +112,11 @@ fun TagsView (tagsViewModel: TagsViewModel,
                             )
                             Button(
                                 onClick = {
-                                    if(addTagTextField.value !in mapTagsCriteria.value.keys){
-                                        tagsViewModel.addTagCriteria(
-                                            addTagTextField.value,
-                                            selectedCriteria.value)
-                                        addTagTextField.value =""
-                                        selectedCriteria.value = emptyList()
-                                    }
-                                    else{
-                                        /*TODO*/
-                                    }
-
+                                    tagsViewModel.addTagCriteria(
+                                        addTagTextField.value,
+                                        selectedCriteria.value)
+                                    addTagTextField.value =""
+                                    selectedCriteria.value = emptyList()
                                 },
                                 modifier = Modifier
                                     .padding(8.dp)
@@ -143,35 +151,56 @@ fun TagsView (tagsViewModel: TagsViewModel,
                             modifier = Modifier
                                 .width(150.dp)
                         ) {
-                            criteriaList.value.forEach { criteria ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = rememberRipple(),
-                                            onClick = {
-                                                if (selectedCriteria.value.contains(criteria)) {
-                                                    tagsViewModel.removeC(criteria)
-                                                    //selectedCriteria.remove(criteria)
-                                                } else {
-                                                    tagsViewModel.addC(criteria)
-                                                    //selectedCriteria.value.add(criteria)
+                            if(criteriaList.value.isNotEmpty()) {
+                                criteriaList.value.forEach { criteria ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = rememberRipple(),
+                                                onClick = {
+                                                    if (selectedCriteria.value.contains(criteria)) {
+                                                        tagsViewModel.removeC(criteria)
+                                                        //selectedCriteria.remove(criteria)
+                                                    } else {
+                                                        tagsViewModel.addC(criteria)
+                                                        //selectedCriteria.value.add(criteria)
+                                                    }
+                                                    //expanded.value = false
                                                 }
-                                                //expanded.value = false
-                                            }
-                                        )
-                                        .padding(16.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
+                                            )
+                                            .padding(16.dp)
                                     ) {
-                                        Checkbox(
-                                            checked = selectedCriteria.value.contains(criteria),
-                                            onCheckedChange = null // null recommended for accessibility with screenreaders
-                                        )
-                                        Text(text = criteria, modifier = Modifier.padding(start = 8.dp))
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Checkbox(
+                                                checked = selectedCriteria.value.contains(criteria),
+                                                onCheckedChange = null // null recommended for accessibility with screenreaders
+                                            )
+                                            Text(
+                                                text = criteria,
+                                                modifier = Modifier.padding(start = 8.dp)
+                                            )
+                                        }
                                     }
+                                }
+                            }
+                            else{
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Нет созданных критериев, нажмите чтобы добавить",
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .clickable {
+                                                navController.navigate(Screens.CRITERIA_SCREEN)
+                                            }
+                                    )
                                 }
                             }
                         }
