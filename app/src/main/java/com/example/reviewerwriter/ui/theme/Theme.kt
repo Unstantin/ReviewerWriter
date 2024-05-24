@@ -13,10 +13,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.rememberNavController
-import com.example.reviewerwriter.view.LoginView
 
 private val DarkColorScheme = darkColorScheme(
     primary = DarkBrown20,
@@ -24,13 +21,13 @@ private val DarkColorScheme = darkColorScheme(
     primaryContainer = Brown30,
     onPrimaryContainer = Brown90,
     inversePrimary = DarkBrown80,
-    secondary =DarkBrown70 ,
+    secondary = DarkBrown70 ,
     onSecondary = DarkBrown20,
     secondaryContainer = Gray40,
     onSecondaryContainer = DarkBrown20,
     tertiary = Gray80,
     tertiaryContainer = Gray50,
-    onTertiary =Gray30,
+    onTertiary = Gray30,
     error = Red80,
     onError = Red20,
     errorContainer = Red30,
@@ -52,7 +49,7 @@ private val LightColorScheme = lightColorScheme(
     primaryContainer = Brown20,
     onPrimaryContainer = Brown90,
     inversePrimary = Brown80,
-    secondary =DarkBrown40 ,
+    secondary = DarkBrown40 ,
     onSecondary = Gray50,
     secondaryContainer = DarkBrown90,
     onSecondaryContainer = DarkBrown30,
