@@ -5,22 +5,48 @@ import com.example.reviewerwriter.data.network.RetrofitFactory
 import com.example.reviewerwriter.domain.authUseCase.AuthRepository
 import com.example.reviewerwriter.domain.etites.AuthTokenEntity
 import com.example.reviewerwriter.domain.etites.Status
+import com.example.reviewerwriter.ui.utils.TokenStorage
+import com.google.gson.Gson
 
-class AuthRepositoryImpl : AuthRepository {
+class AuthRepositoryImpl(private val tokenStorage: TokenStorage) : AuthRepository {
     private val mainApi = RetrofitFactory.getMainApi()
-    override suspend fun LoginUser(authDto: AuthDto): Status<AuthTokenEntity> {
+    private val gson = Gson()
+
+    override suspend fun loginUser(authDto: AuthDto,callback: (Status<AuthTokenEntity>) -> Unit) {
         return try {
             val response = mainApi.log(authDto)
-            if (response.token != null) {
-                // Если токен пришел в ответе, создаем AuthTokenEntity и возвращаем его
-                Status(200, AuthTokenEntity(response.token), null)
+            if (response.isSuccessful) {
+                response.body()?.token
+                //val jsonString = response.body()?.toString() // Преобразование тела ответа в строку
+                //val getTokenDto = gson.fromJson(jsonString, GetTokenDto::class.java)
+                if(response.body()?.token != null){
+                    // Сохранение токена в SharedPreferences
+                    tokenStorage.saveToken(response.body()?.token!!)
+
+                    callback(Status(response.code(), AuthTokenEntity(response.body()?.token!!), null))
+                } else {
+                    callback(Status(response.code(), null, Exception(response.errorBody()?.string())))
+                }
             } else {
-                // Если токен не пришел или он пустой, возвращаем ошибку
-                Status(400, null, Exception("Token not found in response"))
+                callback(Status(response.code(), null, Exception(response.errorBody()?.string())))
             }
         } catch (e: Exception) {
-            // Если произошло исключение, возвращаем его
-            Status(-1, null, e)
+            callback(Status(-1, null, e))
+        }
+    }
+
+    override suspend fun registrationUser(authDto: AuthDto, callback: (Status<Unit>) -> Unit) {
+        return try{
+            val response = mainApi.reg(authDto)
+            if(response.isSuccessful){
+                callback(Status(response.code(),null,null))
+            }
+            else{
+                callback(Status(response.code(),null,  Exception(response.errorBody()?.string())))
+            }
+        }
+        catch (e: Exception){
+            callback(Status(-1,null,e))
         }
     }
 }

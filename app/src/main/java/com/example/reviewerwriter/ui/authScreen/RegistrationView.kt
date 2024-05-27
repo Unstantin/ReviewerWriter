@@ -37,11 +37,16 @@ import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.ui.theme.SystemInDarkThemeShadow
 import com.example.reviewerwriter.ui.theme.SystemInLightThemeShadow
 import com.example.reviewerwriter.ui.utils.ObserveToastMessage
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationView (registrationViewModel: RegistrationViewModel, context: Context, navController: NavController){
+fun RegistrationView (
+    registrationViewModel: RegistrationViewModel = koinViewModel(),
+    context: Context,
+    navController: NavController
+){
 
     // Состояние для полей кнопок
     val usernameTextField = registrationViewModel.usernameTextField

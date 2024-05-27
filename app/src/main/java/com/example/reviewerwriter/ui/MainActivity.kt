@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +21,7 @@ import com.example.reviewerwriter.ui.authScreen.RegistrationView
 import com.example.reviewerwriter.ui.authScreen.RegistrationViewModel
 import com.example.reviewerwriter.ui.createScreen.ReviewCreatingView
 import com.example.reviewerwriter.ui.createScreen.ReviewCreatingViewModel
+import com.example.reviewerwriter.ui.di.appModule
 import com.example.reviewerwriter.ui.mainScreen.MainBottomNavViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainView
 import com.example.reviewerwriter.ui.mainScreen.MainViewModel
@@ -33,11 +33,21 @@ import com.example.reviewerwriter.ui.serviceScreen.tags.TagsView
 import com.example.reviewerwriter.ui.serviceScreen.tags.TagsViewModel
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.ui.utils.Screens
+import com.example.reviewerwriter.ui.utils.TokenStorage
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
+        startKoin {
+            androidLogger()
+            androidContext(this@MainActivity)
+            modules(appModule)
+        }
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
@@ -47,14 +57,16 @@ class MainActivity : ComponentActivity() {
                 activity.window.setBackgroundBlurRadius(15)
             }
             // объекты viewModel
-            val loginViewModel: LoginViewModel = viewModel()
-            val registrationViewModel: RegistrationViewModel = viewModel()
-            val mainBottomNavViewModel: MainBottomNavViewModel = viewModel()
-            val mainViewModel: MainViewModel = viewModel()
-            val reviewCreatingViewModel: ReviewCreatingViewModel = viewModel()
-            val serviceViewModel: ServiceViewModel = viewModel()
-            val tagsViewModel: TagsViewModel = viewModel()
-            val criteriaViewModel: CriteriaViewModel = viewModel()
+
+            val loginViewModel: LoginViewModel = koinViewModel()
+            val registrationViewModel: RegistrationViewModel = koinViewModel()
+            val mainBottomNavViewModel: MainBottomNavViewModel = koinViewModel()
+            val mainViewModel: MainViewModel = koinViewModel()
+            val reviewCreatingViewModel: ReviewCreatingViewModel = koinViewModel()
+            val serviceViewModel: ServiceViewModel = koinViewModel()
+            val tagsViewModel: TagsViewModel = koinViewModel()
+            val criteriaViewModel: CriteriaViewModel = koinViewModel()
+            val tokenStorage = TokenStorage(activity)
 
             ReviewerWriterTheme {
                 // A surface container using the 'background' color from the theme
@@ -67,10 +79,13 @@ class MainActivity : ComponentActivity() {
                     //запуск активности экрана входа
                     NavHost(
                         navController = navController,
-                        startDestination = Screens.MAIN_SCREEN
+                        startDestination = Screens.LOGIN_SCREEN
                     ) {
                         composable(Screens.LOGIN_SCREEN) {
-                            LoginView(loginViewModel, this@MainActivity, navController)
+                            LoginView(
+                                loginViewModel,
+                                this@MainActivity,
+                                navController)
                         }
 
                         composable(Screens.REGISTRATION_SCREEN) {

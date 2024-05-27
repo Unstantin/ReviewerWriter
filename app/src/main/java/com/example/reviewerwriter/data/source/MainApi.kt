@@ -1,19 +1,23 @@
 package com.example.reviewerwriter.data.source
 
 import com.example.reviewerwriter.data.dto.AuthDto
-import com.example.reviewerwriter.data.dto.TagDto
-import com.example.reviewerwriter.data.dto.getTokenDto
+import com.example.reviewerwriter.data.dto.GetTagDto
+import com.example.reviewerwriter.data.dto.GetTokenDto
+import com.example.reviewerwriter.domain.etites.SaveTagsEntity
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 interface MainApi {
     @POST("/v1/auth/log")
-    suspend fun log(@Body authDto: AuthDto): getTokenDto
+    suspend fun log(@Body authDto: AuthDto): Response<GetTokenDto>
     @POST("/v1/auth/reg")
     suspend fun reg(@Body authDto: AuthDto) : Response<Unit>
     @PATCH("/v1/accounts")
-    suspend fun setTags(@Body tagDto: TagDto): Response<Unit>
-
+    suspend fun setTags(@Header("Authorization") token: String, @Body tagDto: SaveTagsEntity): Response<Unit>
+    @GET("/v1/accounts")
+    suspend fun getTags(@Header("Authorization") token: String): Response<GetTagDto>
 }

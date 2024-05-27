@@ -3,21 +3,24 @@ package com.example.reviewerwriter.ui.serviceScreen.tags
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.reviewerwriter.data.TagsRepositoryImpl
-import com.example.reviewerwriter.data.dto.TagDto
-import com.example.reviewerwriter.domain.etites.Criteria
+import com.example.reviewerwriter.domain.etites.CriteriaEntity
 import com.example.reviewerwriter.domain.etites.SaveTagsEntity
-import com.example.reviewerwriter.domain.etites.Status
-import com.example.reviewerwriter.domain.etites.Tag
+import com.example.reviewerwriter.domain.etites.TagEntity
+import com.example.reviewerwriter.domain.tagsUseCase.SetTagsUseCase
 import com.example.reviewerwriter.ui.utils.showToastMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TagsViewModel() : ViewModel(), showToastMessage {
+class TagsViewModel(
+    private val setTagsUseCase: SetTagsUseCase
+) : ViewModel(), showToastMessage {
     override val _showToastMessage = MutableLiveData<String>()
     val addTagTextField = mutableStateOf("")
     var expanded = mutableStateOf(false)
     var selectedCriteria = mutableStateOf(listOf<String>())
     var mapTagsCriteria = mutableStateOf<Map<String, List<String>>>(emptyMap())
-    private val tagsRepository = TagsRepositoryImpl()
 
     override fun onshowToastMessageDone() {
         _showToastMessage.value = ""
@@ -32,7 +35,7 @@ class TagsViewModel() : ViewModel(), showToastMessage {
                 currentMap[tag] = criteria
             }
             mapTagsCriteria.value = currentMap
-            sendTagsWithCriteria { _showToastMessage.value = it.statusCode.toString() }
+            sendTagsWithCriteria()
         }
     }
 
@@ -42,7 +45,7 @@ class TagsViewModel() : ViewModel(), showToastMessage {
             currentMap.remove(tag)
         }
         mapTagsCriteria.value = currentMap
-        sendTagsWithCriteria { _showToastMessage.value = it.statusCode.toString() }
+        sendTagsWithCriteria()
     }
 
     fun removeValueFromTagCriteria(tag: String, criteria: String) {
@@ -54,7 +57,7 @@ class TagsViewModel() : ViewModel(), showToastMessage {
             }
         }
         mapTagsCriteria.value = currentMap
-        sendTagsWithCriteria { _showToastMessage.value = it.statusCode.toString() }
+        sendTagsWithCriteria()
 
     }
 
@@ -66,16 +69,34 @@ class TagsViewModel() : ViewModel(), showToastMessage {
         selectedCriteria.value = selectedCriteria.value.filter { it != c }
     }
 
-    fun sendTagsWithCriteria(callback: (Status<SaveTagsEntity>) -> Unit) {
+    fun sendTagsWithCriteria() {
         // Преобразуем mapTagsCriteria в TagDto
-        val tagDto = TagDto(mapTagsCriteria.value.map { (name, criteria) ->
-            Tag(name, criteria.map { Criteria(it, null) })
+        val tagDto = SaveTagsEntity(mapTagsCriteria.value.map { (name, criteria) ->
+            TagEntity(name, criteria.map { CriteriaEntity(it, null) })
         }.toList())
 
-        // Используем TagsRepositoryImpl для отправки тегов на сервер
-        tagsRepository.setTags(tagDto) { status ->
-            // Вызываем callback с результатом ответа сервера
-            callback(status)
+        CoroutineScope(Dispatchers.IO).launch {
+            setTagsUseCase.execute(tagDto){status ->
+                when(status.statusCode){
+                    200 -> {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(Dispatchers.Main) {
+                                _showToastMessage.value =
+                                    "Теги обновлены"
+                            }
+                        }
+                    }
+                    else -> {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(Dispatchers.Main) {
+                                // Обработка ошибки
+                                _showToastMessage.value =
+                                    "Ошибка: ${status.errors?.message}"
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

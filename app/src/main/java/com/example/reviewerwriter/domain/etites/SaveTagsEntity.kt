@@ -1,14 +1,13 @@
 package com.example.reviewerwriter.domain.etites
 
 data class SaveTagsEntity(
-    val tags:  List<Tag>
+    val tags:  List<TagEntity>
 )
-data class Criteria(
-    val name: String,
+data class CriteriaEntity(
+    val name: String?,
     val value: Int?
 )
-
-data class Tag(
+data class TagEntity(
     val name: String,
-    val criteria: List<Criteria>
+    val criteria: List<CriteriaEntity>?
 )

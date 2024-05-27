@@ -1,4 +1,3 @@
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -52,17 +51,21 @@ android {
 
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.7.2")
-    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
-    implementation ("androidx.compose.material:material-icons-extended:1.6.7")
-    implementation ("io.coil-kt:coil-compose:2.1.0")
-    implementation ("androidx.core:core-ktx:1.13.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.7.2")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
     implementation("io.insert-koin:koin-core:3.2.0")
+    implementation("io.insert-koin:koin-androidx-compose:3.2.0")
+    implementation("io.coil-kt:coil:2.1.0")
+    implementation("io.insert-koin:koin-android:3.2.0")
+    implementation("com.google.code.gson:gson:2.10")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
