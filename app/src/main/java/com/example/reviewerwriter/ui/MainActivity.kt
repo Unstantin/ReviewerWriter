@@ -25,6 +25,8 @@ import com.example.reviewerwriter.ui.createScreen.ReviewCreatingViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainBottomNavViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainView
 import com.example.reviewerwriter.ui.mainScreen.MainViewModel
+import com.example.reviewerwriter.ui.reviewScreen.ReviewView
+import com.example.reviewerwriter.ui.reviewScreen.ReviewViewModel
 import com.example.reviewerwriter.ui.serviceScreen.ServiceView
 import com.example.reviewerwriter.ui.serviceScreen.ServiceViewModel
 import com.example.reviewerwriter.ui.serviceScreen.criteria.CriteriaView
@@ -55,6 +57,7 @@ class MainActivity : ComponentActivity() {
             val serviceViewModel: ServiceViewModel = viewModel()
             val tagsViewModel: TagsViewModel = viewModel()
             val criteriaViewModel: CriteriaViewModel = viewModel()
+            val reviewViewModel: ReviewViewModel = viewModel()
 
             ReviewerWriterTheme {
                 // A surface container using the 'background' color from the theme
@@ -128,8 +131,15 @@ class MainActivity : ComponentActivity() {
                                 mainBottomNavViewModel = mainBottomNavViewModel
                             )
                         }
-                        /*TODO: вариантивность переходов в экраны
-                           (один экран имеет возможность открыть несколько других)*/
+
+                        composable(Screens.REVIEW_SCREEN) {
+                            ReviewView(
+                                reviewViewModel = reviewViewModel,
+                                context = this@MainActivity,
+                                navController = navController,
+                                mainBottomNavViewModel = mainBottomNavViewModel
+                            )
+                        }
                     }
                 }
             }

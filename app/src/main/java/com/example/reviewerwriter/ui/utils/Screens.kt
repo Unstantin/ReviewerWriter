@@ -9,4 +9,5 @@ object Screens {
     const val SERVICES_SCREEN = "services_screen"
     const val TAGS_SCREEN = "tags_screen"
     const val CRITERIA_SCREEN = "criteria_screen"
+    const val REVIEW_SCREEN = "review_screen"
 }
