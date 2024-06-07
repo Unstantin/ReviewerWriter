@@ -1,4 +1,4 @@
-package com.example.reviewerwriter.domain.etites
+package com.example.reviewerwriter.domain.entites
 
 data class Status<T>(
     val statusCode: Int,

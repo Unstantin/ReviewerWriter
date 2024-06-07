@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,13 +33,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.ui.theme.SystemInDarkThemeShadow
 import com.example.reviewerwriter.ui.theme.SystemInLightThemeShadow
 import com.example.reviewerwriter.ui.utils.ObserveToastMessage
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint(
     "UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState",
@@ -43,7 +50,11 @@ import com.example.reviewerwriter.ui.utils.ObserveToastMessage
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(loginViewModel: LoginViewModel, context: Context, navController: NavController) {
+fun LoginView(
+    loginViewModel: LoginViewModel = koinViewModel(),
+    context: Context,
+    navController: NavController
+) {
 
     // Состояние для полей кнопок
     val usernameTextField = loginViewModel.usernameTextField
@@ -54,6 +65,7 @@ fun LoginView(loginViewModel: LoginViewModel, context: Context, navController: N
     val usernameTextFieldPlaceholder = "Username"
     val passwordTextFieldPlaceholder = "Password"
     val mainButtonText = "SIGN IN"
+    val passwordVisible =  loginViewModel.passwordVisible
 
     //отслеживание
     ObserveToastMessage(loginViewModel, context)
@@ -82,23 +94,15 @@ fun LoginView(loginViewModel: LoginViewModel, context: Context, navController: N
                     TextButton(
                         onClick = { loginViewModel.onTextButtonSignInClick() },
                         modifier = Modifier
+                        .background(
+                            color =  if (isSystemInDarkTheme()) SystemInDarkThemeShadow.copy(alpha = 0.7f)
+                            else SystemInLightThemeShadow.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(40.dp)
+                        )
                     ) {
                         Text(
                             text = textButtonSignIn,
                             modifier = Modifier
-                                .shadow(
-                                    clip = true,
-                                    elevation = 15.dp,
-                                    ambientColor = if (isSystemInDarkTheme()) SystemInDarkThemeShadow
-                                    else SystemInLightThemeShadow,
-                                    spotColor = if (isSystemInDarkTheme()) SystemInDarkThemeShadow
-                                    else SystemInLightThemeShadow
-                                )
-                                .background(
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                    color = if (isSystemInDarkTheme()) SystemInDarkThemeShadow
-                                    else SystemInLightThemeShadow
-                                )
                         )
                     }
                     TextButton(
@@ -143,18 +147,18 @@ fun LoginView(loginViewModel: LoginViewModel, context: Context, navController: N
                         .padding(top = 25.dp)
                         .clip(MaterialTheme.shapes.extraLarge),
                     placeholder = { Text(passwordTextFieldPlaceholder) },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { /* Handle keyboard action */ }),
                     trailingIcon = {
-                        IconButton(onClick = {/*TODO: нажатие на просмотр пароля*/ }) {
+                        IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
                             Icon(
-                                /*TODO: изменить иконку для нажатия*/
-                                imageVector = Icons.Default.Visibility,
-                                contentDescription = "Visability Icon"
+                                imageVector = if (passwordVisible.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = "Visibility Icon"
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                    ),
+                    colors = TextFieldDefaults.textFieldColors()
                 )
                 Button(
                     // передаем значения в полях при нажатии на кнопку
@@ -178,12 +182,3 @@ fun LoginView(loginViewModel: LoginViewModel, context: Context, navController: N
         }
     }
 }
-
-/*@Preview(showBackground = true)
-@Composable
-private fun GreetingPreview() {
-    val navController = rememberNavController()
-    LoginView(context = LocalContext.current,navController )
-
-}*/
-

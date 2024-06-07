@@ -1,8 +1,7 @@
 package com.example.reviewerwriter.data.dto
 
-import com.example.reviewerwriter.domain.etites.Tag
-
-data class TagDto(
+data class GetTagDto(
+    val nickname: String?,
     val tags:  List<Tag>?
 )
 data class Criteria(

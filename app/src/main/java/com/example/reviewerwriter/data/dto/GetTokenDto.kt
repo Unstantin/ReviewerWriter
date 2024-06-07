@@ -1,5 +1,5 @@
 package com.example.reviewerwriter.data.dto
 
-data class getTokenDto(
+data class GetTokenDto(
     val token: String?
 )

@@ -1,10 +1,14 @@
 package com.example.reviewerwriter.ui.createScreen
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.view.CameraController
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,9 +30,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddPhotoAlternate
@@ -59,9 +65,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.reviewerwriter.ui.mainScreen.MainBottomNavViewModel
+import com.example.reviewerwriter.ui.serviceScreen.criteria.CameraPreviewView
 import com.example.reviewerwriter.ui.serviceScreen.criteria.CriteriaViewModel
 import com.example.reviewerwriter.ui.serviceScreen.tags.TagsViewModel
 import com.example.reviewerwriter.ui.theme.Gray10
@@ -91,32 +99,57 @@ fun ReviewCreatingView(
     var expandedStar by reviewCreatingViewModel.expanded
     val iconList = reviewCreatingViewModel.iconList
     var selectedText by reviewCreatingViewModel.selectedText
-    var selectedImageUris by reviewCreatingViewModel.selectedImageUris
+    var selectedImage by reviewCreatingViewModel.selectedImage
     val mapTagsCriteria = tagsViewModel.mapTagsCriteria
     val expandedTag =  reviewCreatingViewModel.expandedTag
-    val expandedCriteria =  reviewCreatingViewModel.expandedCriteria
-    val selectedCriteria = reviewCreatingViewModel.selectedCriteria
-    val selectedTags = reviewCreatingViewModel.selectedTags
-    val criteriaList = criteriaViewModel.сriteriaList
-
+    val expandedSelectStar = reviewCreatingViewModel.expandedSelectStar
+    val onSelectedCriteria = reviewCreatingViewModel.onSelectedCriteria
+    val onSelectedTag = reviewCreatingViewModel.onSelectedTag
+    val tags = reviewCreatingViewModel.tags
+    val showCameraPreview = reviewCreatingViewModel.showCameraPreview
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = { uris -> selectedImageUris = selectedImageUris + uris }
-    )
-    val pagerState = rememberPagerState(pageCount = { selectedImageUris.size })
-   /* val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview(),
-        onResult = { bitmap ->
-            selectedImageUris = selectedImageUris + bitmap.toUri()
+        onResult = { uris ->
+            // Обновление selectedImageUris в ReviewCreatingViewModel
+            uris?.let {
+                reviewCreatingViewModel.addImageUris(it, context)
+            }
         }
-    )*/
-
+    )
+    val pagerState = rememberPagerState(pageCount = { selectedImage.size })
+    val controller = remember {
+        LifecycleCameraController(context).apply {
+            setEnabledUseCases(
+                CameraController.IMAGE_CAPTURE
+            )
+        }
+    }
+    val cameraPermissionRequestLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                // Разрешение предоставлено, открываем экран с камерой
+                showCameraPreview.value = true
+            } else {
+                // Разрешение не предоставлено, показываем сообщение об ошибке или информацию о том, что разрешение необходимо
+            }
+        }
+    )
     ReviewerWriterTheme {
         Scaffold(
             bottomBar = { MainBottomNavView(mainBottomNavViewModel, navController) },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        /*TODO: отправка на сервер*/
+                       /* reviewCreatingViewModel.createReview(
+                            reviewTitle,
+                            reviewDescriptionField,
+                            selectedImageUris,
+                            selectedText,
+
+                        )*/
+                    }) {
                     Icon(
                         imageVector = Icons.Default.Save,
                         contentDescription = null,
@@ -124,6 +157,14 @@ fun ReviewCreatingView(
                 }
             }
         ) { values ->
+            if (showCameraPreview.value) {
+                CameraPreviewView(
+                    reviewCreatingViewModel,
+                    context = context,
+                    controller = controller,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -138,7 +179,7 @@ fun ReviewCreatingView(
                             .clip(MaterialTheme.shapes.small),
 
                         ) {
-                        if (selectedImageUris.isNotEmpty()) {
+                        if (selectedImage.isNotEmpty()) {
                             HorizontalPager(
                                 state = pagerState
                             ) { page ->
@@ -149,7 +190,7 @@ fun ReviewCreatingView(
                                         }
                                 ) {
                                     AsyncImage(
-                                        model = selectedImageUris[page],
+                                        model = selectedImage[page],
                                         contentDescription = null,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -160,10 +201,10 @@ fun ReviewCreatingView(
                                     // удаление фотки
                                     IconButton(
                                         onClick = {
-                                            val currentList = selectedImageUris.toMutableList()
-                                            if (page < selectedImageUris.size) {
+                                            val currentList = selectedImage.toMutableList()
+                                            if (page < selectedImage.size) {
                                                 currentList.removeAt(page)
-                                                selectedImageUris = currentList
+                                                selectedImage = currentList
                                             }
                                         },
                                         modifier = Modifier
@@ -214,7 +255,7 @@ fun ReviewCreatingView(
                             }
                         }
 
-                        if (selectedImageUris.size > 1) {
+                        if (selectedImage.size > 1) {
                             Row(
                                 Modifier
                                     .wrapContentHeight()
@@ -245,8 +286,9 @@ fun ReviewCreatingView(
                     Row(
                         modifier = Modifier
                             .padding(15.dp)
-                            .wrapContentHeight(),
-                        horizontalArrangement = Arrangement.Center
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Button(
                             onClick = {
@@ -259,14 +301,25 @@ fun ReviewCreatingView(
                         }
 
                         Spacer(Modifier.width(16.dp))
-
                         Button(
                             onClick = {
-                                //cameraLauncher.launch(null)
-                                /*TODO*/
+                                // Проверяем разрешение на использование камеры
+                                when {
+                                    ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.CAMERA
+                                    ) == PackageManager.PERMISSION_GRANTED -> {
+                                        // Разрешение уже предоставлено, открываем экран с камерой
+                                        showCameraPreview.value = true
+                                    }
+                                    else -> {
+                                        // Запрашиваем разрешение
+                                        cameraPermissionRequestLauncher.launch(Manifest.permission.CAMERA)
+                                    }
+                                }
                             }
                         ) {
-                            Text(text = "Сделать фото")
+                            Text(text = "Сделать снимок")
                         }
                     }
 
@@ -349,7 +402,6 @@ fun ReviewCreatingView(
                     )
                 }
                 item {
-
                     Row(
                         modifier = Modifier
                             .padding(8.dp)
@@ -368,29 +420,6 @@ fun ReviewCreatingView(
                         )
                     }
 
-                    FlowRow(
-                        /*mainAxisSpacing = 8.dp, // расстояние по главной оси
-                        crossAxisSpacing = 8.dp  // расстояние по поперечной оси*/
-                    ) {
-                        selectedTags.value.forEach { tag ->
-                            InputChip(
-                                selected = true,
-                                onClick = {
-                                    reviewCreatingViewModel
-                                        .removeSelectedTag(tag, mapTagsCriteria.value.getValue(tag))
-                                },
-                                label = {
-                                    Text(text = tag)
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "убрать тег"
-                                    )
-                                },
-                                modifier = Modifier
-                                    .padding(horizontal = 2.dp)
-                            )
-                        }
-                    }
                     DropdownMenu(
                         expanded = expandedTag.value,
                         onDismissRequest = { expandedTag.value = false },
@@ -407,16 +436,16 @@ fun ReviewCreatingView(
                                             interactionSource = remember { MutableInteractionSource() },
                                             indication = rememberRipple(),
                                             onClick = {
-                                                if (selectedTags.value.contains(tag.key)) {
-                                                    reviewCreatingViewModel.removeSelectedTag(
-                                                        tag.key,
-                                                        tag.value
+                                                if (tags.value.any { it.name == tag.key }) {
+                                                    reviewCreatingViewModel.removeTag(
+                                                        tag.key
                                                     )
                                                 } else {
-                                                    reviewCreatingViewModel.addSelectedTag(
+                                                    reviewCreatingViewModel.addTag(
                                                         tag.key,
-                                                        tag.value
+                                                        mapTagsCriteria.value
                                                     )
+
                                                 }
                                             }
                                         )
@@ -426,8 +455,8 @@ fun ReviewCreatingView(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Checkbox(
-                                            checked = selectedTags.value.contains(tag.key),
-                                            onCheckedChange = null // null recommended for accessibility with screenreaders
+                                            checked = tags.value.any { it.name == tag.key },
+                                            onCheckedChange = null
                                         )
                                         Text(
                                             text = tag.key,
@@ -455,122 +484,115 @@ fun ReviewCreatingView(
                         }
                     }
                 }
-                item {
-                    Row(
+                /*Созданные теги*/
+                itemsIndexed(
+                    items = tags.value.map { it.name }.toList()
+                ) { index, key ->
+                    Box(
                         modifier = Modifier
+                            .wrapContentSize()
+                            .fillMaxWidth()
                             .padding(8.dp)
-                            .clickable { expandedCriteria.value = true },
-                    ) {
-                        Text(
-                            text = "Добавить критерии:",
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Добавить критерии",
-                            modifier = Modifier
-                                .size(25.dp)
-                        )
-                    }
-                    FlowRow(
-                        /*mainAxisSpacing = 8.dp, // расстояние по главной оси
-                        crossAxisSpacing = 8.dp  // расстояние по поперечной оси*/
-                    ) {
-                        selectedCriteria.value.forEach { criteria ->
-                            InputChip(
-                                selected = true,
-                                onClick = {
-                                    reviewCreatingViewModel
-                                        .removeSelectedCriteria(criteria)
-                                },
-                                label = {
-                                    Text(text = criteria)
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "убрать критерий"
-                                    )
-                                },
-                                modifier = Modifier
-                                    .padding(horizontal = 2.dp)
+                            .background(
+                                shape = RoundedCornerShape(10.dp),
+                                color = MaterialTheme.colorScheme.primary
                             )
-                        }
-                    }
-
-                    DropdownMenu(
-                        expanded = expandedCriteria.value,
-                        onDismissRequest = { expandedCriteria.value = false },
-                        modifier = Modifier
-                            .width(150.dp)
                     ) {
-                        if (criteriaList.value.isNotEmpty()){
-                            criteriaList.value.forEach { criteria ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = rememberRipple(),
-                                            onClick = {
-                                                if (selectedCriteria.value.contains(criteria)) {
-                                                    reviewCreatingViewModel.removeSelectedCriteria(
-                                                        criteria
-                                                    )
-                                                    //selectedCriteria.remove(criteria)
-                                                } else {
-                                                    reviewCreatingViewModel.addSelectedCriteria(
-                                                        criteria
-                                                    )
-                                                    //selectedCriteria.value.add(criteria)
-                                                }
-                                                //expanded.value = false
-                                            }
-                                        )
-                                        .padding(16.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Checkbox(
-                                            checked = selectedCriteria.value.contains(criteria),
-                                            onCheckedChange = null // null recommended for accessibility with screenreaders
-                                        )
-                                        Text(
-                                            text = criteria,
-                                            modifier = Modifier.padding(start = 8.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier.fillMaxWidth()
+                        Column {
+                            Row (
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "Нет созданных критериев, нажмите чтобы добавить",
-                                    modifier = Modifier
-                                        .padding(start = 8.dp)
-                                        .clickable {
-                                            navController.navigate(Screens.CRITERIA_SCREEN)
-                                        }
+                                    text = key,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                 )
+                                IconButton(
+                                    onClick = { reviewCreatingViewModel.removeTag(key) },
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.surface,
+                                            MaterialTheme.shapes.small
+                                        )
+                                        .size(32.dp, 32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Удалить тэг"
+                                    )
+                                }
                             }
+
+                            FlowRow(
+                                modifier = Modifier
+                                    .padding(start = 8.dp, end = 8.dp)
+                            ) {
+                                // Находим тег, соответствующий key
+                                val currentTag = tags.value.find { it.name == key }
+                                // Проходим по критериям тега
+                                currentTag?.criteria?.forEach { criteria ->
+                                    InputChip(
+                                        selected = currentTag.criteria?.any { it.name == criteria.name } ?: false,
+                                        onClick = {
+                                            onSelectedCriteria.value = criteria.name.toString()
+                                            onSelectedTag.value = currentTag.name.toString()
+                                            expandedSelectStar.value = true
+                                        },
+                                        label = {
+                                            Text(
+                                                text = "${criteria.name}",
+                                                modifier = Modifier.padding(end = 4.dp)
+                                            )
+                                            Text(
+                                                text = "${criteria.value}",
+                                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                                modifier = Modifier.padding(end = 0.dp)
+                                            )
+                                            Icon(
+                                                imageVector = Icons.Default.Star,
+                                                contentDescription = "рейтинг",
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .padding(horizontal = 2.dp)
+                                    )
+                                }
+                            }
+
                         }
                     }
-
+                    /* Выбор рейтинга */
+                    DropdownMenu(
+                        expanded = expandedSelectStar.value,
+                        onDismissRequest = { expandedSelectStar.value = false },
+                        modifier = Modifier.padding(horizontal = 2.dp)
+                    ) {
+                        (1..5).forEach { rating ->
+                            DropdownMenuItem(
+                                text = { Text(text = rating.toString()) },
+                                onClick = {
+                                    // Обновляем рейтинг внутри тега и критерия
+                                    reviewCreatingViewModel.updateCriteriaRating(onSelectedTag.value, onSelectedCriteria.value, rating)
+                                    expandedSelectStar.value = false
+                                })
+                        }
+                        DropdownMenuItem(
+                            text = { Text(text = "Удалить") },
+                            onClick = {
+                                // Удаляем критерий из тега
+                                reviewCreatingViewModel.removeCriteriaFromTag(onSelectedTag.value, onSelectedCriteria.value)
+                                expandedSelectStar.value = false
+                            })
+                    }
+                }
+                item { 
+                    Spacer(modifier = Modifier.padding(20.dp))
                 }
             }
         }
     }
 }
-
-/*
-@Preview
-@Composable
-private fun GreetingPreview() {
-    val navController = rememberNavController()
-    ReviewCreatingView(context = LocalContext.current, navController)
-}*/

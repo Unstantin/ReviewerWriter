@@ -1,19 +1,31 @@
 package com.example.reviewerwriter.ui.authScreen
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.reviewerwriter.data.dto.AuthDto
+import com.example.reviewerwriter.domain.authUseCase.AuthRepository
+import com.example.reviewerwriter.domain.authUseCase.RegUseCase
 import com.example.reviewerwriter.ui.utils.Screens
 import com.example.reviewerwriter.ui.utils.showToastMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class RegistrationViewModel() : ViewModel(), showToastMessage {
+class RegistrationViewModel(
+    private val authRepository: AuthRepository,
+    private val regUseCase: RegUseCase
+) : ViewModel(), showToastMessage {
     // для вывода сообщений
     override val _showToastMessage = MutableLiveData<String>()
     val usernameTextField = mutableStateOf("")
     val passwordTextField = mutableStateOf("")
     val confirmPasswordTextField = mutableStateOf("")
+    val passwordVisible =  mutableStateOf(false)
     fun onTextButtonSignInClick(navController: NavController) {
         navController.navigate(Screens.LOGIN_SCREEN)
     }
@@ -32,7 +44,7 @@ class RegistrationViewModel() : ViewModel(), showToastMessage {
         confirmPasswordTextField: MutableState<String>,
         navController: NavController
     ) {
-        /*TODO: проверка на отсутствие спец символов*//*
+        //TODO: проверка на отсутствие спец символов
 
         // проверка на значения в полях
         if (checkFieldForText(usernameTextField.value) &&
@@ -40,37 +52,50 @@ class RegistrationViewModel() : ViewModel(), showToastMessage {
             checkFieldForText(confirmPasswordTextField.value)
         ) {
             if (checkPasswordMatch(passwordTextField.value, confirmPasswordTextField.value)) {
-                // создание экземпляров NetworkModule и Retrofit перед вызовом provideMainApi
-                val client = networkModule.provideOkHttpClient()
-                val retrofit = networkModule.provideRetrofit(client)
-                val mainApi = networkModule.provideMainApi(retrofit)
+
+                val authDto = AuthDto(usernameTextField.value,passwordTextField.value)
+               // val authRepository = AuthRepositoryImpl()
+                //val regUseCase: RegUseCase = RegUseCase(authRepository)
 
                 // отправка запроса в многопоточном режиме
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val statusCode = mainApi.registration(
-                            RegistrationRequest(
-                                usernameTextField.value,
-                                passwordTextField.value
-                            )
-                        ).code
-                        _showToastMessage.postValue("код статуса = ${statusCode}")
+                        regUseCase.execute(authDto) { status ->
+                            when (status.statusCode) {
+                                200 -> {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        withContext(Dispatchers.Main) {
+                                            _showToastMessage.value =
+                                                "Вы успешно зарегестрировались"
+                                            navController.navigate(Screens.LOGIN_SCREEN)
+                                        }
+                                    }
+                                }
 
+                                else -> {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        withContext(Dispatchers.Main) {
+                                            // Обработка ошибки
+                                            _showToastMessage.value =
+                                                "Ошибка: ${status.errors?.message   }"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     } catch (e: Exception) {
-                        _showToastMessage.postValue("error")
+                        _showToastMessage.postValue("Ошибка сети: ${e.message}")
                         Log.w("error", "${e.message}")
                     }
                 }
-                // для перехода на экран login после успешной регистрации
-                navController.navigate(Screens.LOGIN_SCREEN)
             } else {
-                *//*todo: анимация остутствия инфы в поле*//*
+                //todo: анимация остутствия инфы в поле
                 _showToastMessage.postValue("пароли должны совпадать")
             }
         } else {
-            *//*todo: анимация остутствия инфы в поле*//*
+            //todo: анимация остутствия инфы в поле
             _showToastMessage.postValue("все поля должны быть заполнены")
-        }*/
+        }
     }
 
     private fun checkFieldForText(field: String): Boolean {

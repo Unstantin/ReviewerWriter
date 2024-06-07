@@ -48,8 +48,7 @@ fun CriteriaView (
 
     val addCriteriaTextField = criteriaViewModel.addCriteriaTextField
     val addCriteriaTextFieldPlaceholder = "Добавить критерий"
-    val сriteriaList = criteriaViewModel.сriteriaList
-
+    val сriteriaList = criteriaViewModel.criteriaList
     ObserveToastMessage(criteriaViewModel, context)
 
     ReviewerWriterTheme {
@@ -91,7 +90,7 @@ fun CriteriaView (
                             )
                         Button(
                             onClick = {
-                                criteriaViewModel.addCritaria(addCriteriaTextField.value)
+                                criteriaViewModel.addCriteria(addCriteriaTextField.value)
                                 addCriteriaTextField.value =""
                             },
                             modifier = Modifier
@@ -106,7 +105,7 @@ fun CriteriaView (
                     }
                 }
                 items(
-                    criteriaViewModel.сriteriaList.value.size
+                    criteriaViewModel.criteriaList.value.size
                 ) {
                     Box(
                         modifier = Modifier
@@ -132,7 +131,7 @@ fun CriteriaView (
                                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                 )
                             IconButton(
-                                onClick = { criteriaViewModel.removeCritaria(сriteriaList.value[it])
+                                onClick = { criteriaViewModel.removeCriteria(сriteriaList.value[it])
                                 },
                                 modifier = Modifier
                                     .background(
