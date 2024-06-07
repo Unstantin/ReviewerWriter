@@ -1,14 +1,12 @@
 package com.example.reviewerwriter.data
 
-import com.example.reviewerwriter.data.dto.GetTagDto
 import com.example.reviewerwriter.data.network.RetrofitFactory
-import com.example.reviewerwriter.domain.etites.CriteriaEntity
-import com.example.reviewerwriter.domain.etites.SaveTagsEntity
-import com.example.reviewerwriter.domain.etites.Status
-import com.example.reviewerwriter.domain.etites.TagEntity
+import com.example.reviewerwriter.domain.entites.CriteriaEntity
+import com.example.reviewerwriter.domain.entites.SaveTagsEntity
+import com.example.reviewerwriter.domain.entites.Status
+import com.example.reviewerwriter.domain.entites.TagEntity
 import com.example.reviewerwriter.domain.tagsUseCase.TagsRepository
 import com.example.reviewerwriter.ui.utils.TokenStorage
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,44 +14,35 @@ import kotlinx.coroutines.launch
 class TagsRepositoryImpl(private val tokenStorage: TokenStorage) : TagsRepository {
 
     private val mainApi = RetrofitFactory.getMainApi()
-    private val gson = Gson()
     override fun getTags(callback: (Status<SaveTagsEntity>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (tokenStorage.getToken() != null) {
                     val response = mainApi.getTags("Bearer ${tokenStorage.getToken()}")
                     if (response.isSuccessful) {
-                        val jsonString =
-                            response.body()?.toString() // Преобразование тела ответа в строку
-                        val getTagDto = gson.fromJson(jsonString, GetTagDto::class.java)
                         // Создание списка для хранения тегов
-                        val tagEntities = mutableListOf<TagEntity>()
-
-                        // Проход по списку тегов и добавление не-null тегов в список tagEntities
-                        getTagDto.tags?.forEach { tag ->
-                            tag?.let {
-                                val criteriaEntities = it.criteria?.mapNotNull { criteria ->
-                                    criteria.name?.let { name ->
-                                        CriteriaEntity(
-                                            name = name,
-                                            value = criteria.value
-                                        )
-                                    }
-                                }
-                                if (criteriaEntities != null && criteriaEntities.isNotEmpty()) {
-                                    val tagEntity = TagEntity(
-                                        name = it.name ?: "",
-                                        criteria = criteriaEntities
+                        val tagEntities = arrayListOf<TagEntity>()
+                        val tags = response.body()?.tags
+                        tags?.forEach { tag ->
+                            val criteria: ArrayList<CriteriaEntity> = arrayListOf()
+                            tag.criteria?.forEach {
+                                criteria.add(
+                                    CriteriaEntity(
+                                        name = it.name,
+                                        value = it.value
                                     )
-
-                                    tagEntities.add(tagEntity)
-                                }
+                                )
                             }
+                            tagEntities.add(
+                                TagEntity(
+                                    name = tag.name!!,
+                                    criteria = criteria
+                                )
+                            )
                         }
-
                         val saveTagsEntity = SaveTagsEntity(tags = tagEntities)
 
-                        callback(Status(0, saveTagsEntity, null))
+                        callback(Status(200, saveTagsEntity, null))
                     }
                     else {
                         // Возвращение ошибки, если ответ не успешен
@@ -70,15 +59,15 @@ class TagsRepositoryImpl(private val tokenStorage: TokenStorage) : TagsRepositor
         }
     }
 
-    override fun setTags(tagDto: SaveTagsEntity, callbaсk: (Status<Unit>) -> Unit) {
+    override fun setTags(tagDto: SaveTagsEntity, callback: (Status<Unit>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (tokenStorage.getToken() != null) {
                     val response = mainApi.setTags("Bearer ${tokenStorage.getToken()}", tagDto)
                     if (response.isSuccessful) {
-                        callbaсk(Status(response.code(), null, null))
+                        callback(Status(response.code(), null, null))
                     } else {
-                        callbaсk(
+                        callback(
                             Status(
                                 response.code(),
                                 null,
@@ -88,10 +77,10 @@ class TagsRepositoryImpl(private val tokenStorage: TokenStorage) : TagsRepositor
                     }
                 }
                 else{
-                    callbaсk(Status(-1, null,Exception("Токен отсутствует")))
+                    callback(Status(-1, null,Exception("Токен отсутствует")))
                 }
             } catch (e: Exception) {
-                callbaсk(Status(-1, null, e))
+                callback(Status(-1, null, e))
             }
         }
     }

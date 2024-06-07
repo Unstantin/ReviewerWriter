@@ -62,7 +62,7 @@ fun TagsView (tagsViewModel: TagsViewModel,
 ){
     val addTagTextField = tagsViewModel.addTagTextField
     val addTagTextFieldPlaceholder = "Добавить тег"
-    val criteriaList = criteriaViewModel.сriteriaList
+    val criteriaList = tagsViewModel.сriteriaList
     val expanded = tagsViewModel.expanded
     val selectedCriteria = tagsViewModel.selectedCriteria
     val mapTagsCriteria = tagsViewModel.mapTagsCriteria
@@ -273,7 +273,10 @@ fun TagsView (tagsViewModel: TagsViewModel,
                                         )
                                     }
                                 }
-                                FlowRow() {
+                                FlowRow(
+                                    modifier = Modifier
+                                        .padding(start = 8.dp, end = 8.dp)
+                                ) {
                                     mapTagsCriteria.value[key]?.forEach { criteria ->
                                         InputChip(
                                             selected = true,

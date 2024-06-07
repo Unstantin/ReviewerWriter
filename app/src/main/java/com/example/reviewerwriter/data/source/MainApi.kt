@@ -3,7 +3,8 @@ package com.example.reviewerwriter.data.source
 import com.example.reviewerwriter.data.dto.AuthDto
 import com.example.reviewerwriter.data.dto.GetTagDto
 import com.example.reviewerwriter.data.dto.GetTokenDto
-import com.example.reviewerwriter.domain.etites.SaveTagsEntity
+import com.example.reviewerwriter.domain.entites.ReviewDtoEntity
+import com.example.reviewerwriter.domain.entites.SaveTagsEntity
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,4 +21,6 @@ interface MainApi {
     suspend fun setTags(@Header("Authorization") token: String, @Body tagDto: SaveTagsEntity): Response<Unit>
     @GET("/v1/accounts")
     suspend fun getTags(@Header("Authorization") token: String): Response<GetTagDto>
+    @POST("/v1/reviews")
+    suspend fun addReview(@Header("Authorization") token: String, @Body reviewDto: ReviewDtoEntity): Response<Unit>
 }

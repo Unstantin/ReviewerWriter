@@ -1,4 +1,4 @@
-package com.example.reviewerwriter.ui.mainScreen
+    package com.example.reviewerwriter.ui.mainScreen
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -34,7 +34,12 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(mainViewModel : MainViewModel, mainBottomNavViewModel: MainBottomNavViewModel, context: Context, navController: NavController) {
+fun MainView(
+    mainViewModel : MainViewModel,
+    mainBottomNavViewModel: MainBottomNavViewModel,
+    context: Context,
+    navController: NavController
+) {
 
     val items = listOf(
         DrawerItem(
@@ -75,7 +80,6 @@ fun MainView(mainViewModel : MainViewModel, mainBottomNavViewModel: MainBottomNa
                         .requiredWidth(300.dp)
                         .fillMaxWidth()
                 ) {
-                    /*TODO: добавить информацию о пользователе и мб фото профиля на фон */
                     Spacer(
                         modifier = Modifier
                             .height(150.dp)

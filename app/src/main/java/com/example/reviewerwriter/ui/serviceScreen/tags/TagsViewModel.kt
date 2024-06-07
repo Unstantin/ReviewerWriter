@@ -3,10 +3,11 @@ package com.example.reviewerwriter.ui.serviceScreen.tags
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.reviewerwriter.domain.etites.CriteriaEntity
-import com.example.reviewerwriter.domain.etites.SaveTagsEntity
-import com.example.reviewerwriter.domain.etites.TagEntity
+import com.example.reviewerwriter.domain.entites.CriteriaEntity
+import com.example.reviewerwriter.domain.entites.SaveTagsEntity
+import com.example.reviewerwriter.domain.entites.TagEntity
 import com.example.reviewerwriter.domain.tagsUseCase.SetTagsUseCase
+import com.example.reviewerwriter.ui.serviceScreen.TagsCriteriaViewModel
 import com.example.reviewerwriter.ui.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,14 +15,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TagsViewModel(
-    private val setTagsUseCase: SetTagsUseCase
+    private val setTagsUseCase: SetTagsUseCase,
+    private val tagsCriteriaViewModel: TagsCriteriaViewModel
 ) : ViewModel(), showToastMessage {
     override val _showToastMessage = MutableLiveData<String>()
     val addTagTextField = mutableStateOf("")
     var expanded = mutableStateOf(false)
     var selectedCriteria = mutableStateOf(listOf<String>())
-    var mapTagsCriteria = mutableStateOf<Map<String, List<String>>>(emptyMap())
-
+    var mapTagsCriteria = tagsCriteriaViewModel.mapTagsCriteria
+    var сriteriaList = tagsCriteriaViewModel.сriteriaList
     override fun onshowToastMessageDone() {
         _showToastMessage.value = ""
     }

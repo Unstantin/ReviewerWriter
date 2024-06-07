@@ -3,26 +3,49 @@ package com.example.reviewerwriter.ui.serviceScreen.criteria
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.reviewerwriter.ui.utils.CriteriaData
 import com.example.reviewerwriter.ui.utils.showToastMessage
+import kotlinx.coroutines.launch
 
-class CriteriaViewModel() : ViewModel(), showToastMessage {
+class CriteriaViewModel(
+    private val criteriaData: CriteriaData
+) : ViewModel(), showToastMessage {
 
     override val _showToastMessage = MutableLiveData<String>()
     val addCriteriaTextField =  mutableStateOf("")
-    var сriteriaList = mutableStateOf(listOf<String>(
+    val criteriaList = mutableStateOf(listOf<String>())
 
-    ))
+    init {
+        // Загрузка критериев из CriteriaData при инициализации ViewModel
+        viewModelScope.launch {
+            criteriaData.criteriaDto.collect { criteria ->
+                criteriaList.value = criteria
+            }
+        }
+    }
+
     override fun onshowToastMessageDone() {
         _showToastMessage.value = ""
     }
-    fun addCritaria(tag: String){
-        if (tag !in сriteriaList.value) {
-            сriteriaList.value = сriteriaList.value + tag
-        }else{
+    fun addCriteria(criteria: String) {
+        if (criteria !in criteriaList.value) {
+            criteriaData.addCriteria(criteria)
+            // Обновление списка критериев в CriteriaViewModel
+            viewModelScope.launch {
+                criteriaData.criteriaDto.collect { updatedCriteriaList ->
+                    criteriaList.value = updatedCriteriaList
+                }
+            }
+        } else {
             _showToastMessage.value = "Такой критерий уже есть"
         }
     }
-    fun removeCritaria(critaria: String){
-        сriteriaList.value = сriteriaList.value.filter { it != critaria }
+
+    fun removeCriteria(criteria: String) {
+        // Удаление критерия из CriteriaData
+        criteriaData.removeCriteria(criteria)
+        // Обновление списка критериев
+        criteriaList.value = criteriaList.value.filter { it != criteria }
     }
 }

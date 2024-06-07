@@ -1,5 +1,6 @@
 package com.example.reviewerwriter.ui.ui_components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,10 +16,16 @@ import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.mainScreen.MainBottomNavViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainViewModel
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
+import com.example.reviewerwriter.ui.utils.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyScaffold(mainViewModel: MainViewModel, mainBottomNavViewModel: MainBottomNavViewModel, drawerState: DrawerState, navController: NavController){
+fun MyScaffold(
+    mainViewModel: MainViewModel,
+    mainBottomNavViewModel: MainBottomNavViewModel,
+    drawerState: DrawerState,
+    navController: NavController
+){
     ReviewerWriterTheme {
         Scaffold(
             modifier = Modifier
@@ -38,23 +45,15 @@ fun MyScaffold(mainViewModel: MainViewModel, mainBottomNavViewModel: MainBottomN
                 items(100) {
                     Text(
                         text = "Item$it",
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clickable {
+                                navController.navigate(Screens.REVIEW_CARD_SCREEN)
+                            },
                     )
+
                 }
             }
         }
     }
 }
-/*
-@SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-private fun GreetingPreview() {
-    val fdrawerState: MutableState<DrawerValue> = mutableStateOf(DrawerValue.Closed)
-    val drawerState = rememberDrawerState(initialValue = fdrawerState.value)
-    val navController = rememberNavController()
-    MyScaffold(MainViewModel(navController), drawerState,navController )
-}
-
-*/

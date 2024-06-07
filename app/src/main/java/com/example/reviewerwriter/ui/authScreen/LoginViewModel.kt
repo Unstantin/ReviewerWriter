@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import com.example.reviewerwriter.data.dto.AuthDto
 import com.example.reviewerwriter.domain.authUseCase.AuthRepository
 import com.example.reviewerwriter.domain.authUseCase.LogUseCase
+import com.example.reviewerwriter.ui.serviceScreen.TagsCriteriaViewModel
 import com.example.reviewerwriter.ui.utils.Screens
 import com.example.reviewerwriter.ui.utils.showToastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +20,9 @@ import kotlinx.coroutines.withContext
 
 class LoginViewModel(
     private val logUseCase: LogUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val tagsCriteriaViewModel: TagsCriteriaViewModel
+
 ) : ViewModel(), showToastMessage {
     // Пустой конструктор
 
@@ -27,7 +30,7 @@ class LoginViewModel(
     override val _showToastMessage = MutableLiveData<String>()
     val usernameTextField =  mutableStateOf("")
     val passwordTextField = mutableStateOf("")
-
+    var passwordVisible =  mutableStateOf(false)
     fun onTextButtonSignInClick() {
         /*TODO: сделать визуализацию(заглушку) нажатия*/
     }
@@ -61,7 +64,17 @@ class LoginViewModel(
                                     withContext(Dispatchers.Main) {
                                         _showToastMessage.value =
                                             "Вы вошли в аккаунт"
+                                        /*Запрос на сервер на получение тегов и критериев*/
+                                        tagsCriteriaViewModel.getTagsCriteriaFromServer()
                                         navController.navigate(Screens.MAIN_SCREEN)
+                                    }
+                                }
+                            }
+                            403 ->{
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    withContext(Dispatchers.Main) {
+                                        _showToastMessage.value =
+                                            "такого аккаунта нет или не верный пароль"
                                     }
                                 }
                             }

@@ -1,7 +1,7 @@
 package com.example.reviewerwriter.domain.tagsUseCase
 
-import com.example.reviewerwriter.domain.etites.SaveTagsEntity
-import com.example.reviewerwriter.domain.etites.Status
+import com.example.reviewerwriter.domain.entites.SaveTagsEntity
+import com.example.reviewerwriter.domain.entites.Status
 
 interface TagsRepository {
     fun getTags(callbaсk: (Status<SaveTagsEntity>) -> Unit)

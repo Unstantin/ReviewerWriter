@@ -1,4 +1,4 @@
-package com.example.reviewerwriter.domain.etites
+package com.example.reviewerwriter.domain.entites
 
 data class SaveTagsEntity(
     val tags:  List<TagEntity>

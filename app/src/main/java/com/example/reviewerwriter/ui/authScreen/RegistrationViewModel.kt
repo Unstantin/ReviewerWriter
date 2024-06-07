@@ -25,6 +25,7 @@ class RegistrationViewModel(
     val usernameTextField = mutableStateOf("")
     val passwordTextField = mutableStateOf("")
     val confirmPasswordTextField = mutableStateOf("")
+    val passwordVisible =  mutableStateOf(false)
     fun onTextButtonSignInClick(navController: NavController) {
         navController.navigate(Screens.LOGIN_SCREEN)
     }
