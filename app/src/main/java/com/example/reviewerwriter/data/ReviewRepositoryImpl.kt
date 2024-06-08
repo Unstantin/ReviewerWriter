@@ -1,6 +1,8 @@
 package com.example.reviewerwriter.data
 
+import android.util.Log
 import com.example.reviewerwriter.data.network.RetrofitFactory
+import com.example.reviewerwriter.domain.entites.ReviewCardEntity
 import com.example.reviewerwriter.domain.entites.ReviewDtoEntity
 import com.example.reviewerwriter.domain.entites.Status
 import com.example.reviewerwriter.domain.reviewsUseCase.ReviewsRepository
@@ -8,11 +10,37 @@ import com.example.reviewerwriter.ui.utils.TokenStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 
 class ReviewRepositoryImpl(private val tokenStorage: TokenStorage): ReviewsRepository {
     private val mainApi = RetrofitFactory.getMainApi()
-    override fun getAllReviews() {
-        TODO("Not yet implemented")
+    override fun getAllReviews(callback: (Status<List<ReviewCardEntity>>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (tokenStorage.getToken() != null) {
+                    val response = mainApi.getAllReviews(
+                        "Bearer ${tokenStorage.getToken()}")
+                    if (response.isSuccessful) {
+                        callback(Status(response.code(), response.body() , null))
+                        Log.w("response.body()", response.body().toString())
+                    }
+                    else {
+                        callback(
+                            Status(
+                                response.code(),
+                                null,
+                                Exception(response.errorBody()?.string())
+                            )
+                        )
+                    }
+                }
+                else{
+                    callback(Status(-1, null,Exception("Токен отсутствует")))
+                }
+            }catch (e: Exception){
+                callback(Status(-1, null, e))
+            }
+        }
     }
 
     override fun getReviewById() {
@@ -43,6 +71,34 @@ class ReviewRepositoryImpl(private val tokenStorage: TokenStorage): ReviewsRepos
                     callback(Status(-1, null,Exception("Токен отсутствует")))
                 }
             }catch (e: Exception){
+                callback(Status(-1, null, e))
+            }
+        }
+    }
+
+    override fun sendPhoto(photo: MultipartBody, callback: (Status<String>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (tokenStorage.getToken() != null) {
+                    val response = mainApi.sendPhoto(
+                        "Bearer ${tokenStorage.getToken()}",
+                        photo
+                    )
+                    if (response.isSuccessful) {
+                        callback(Status(response.code(), response.body().toString(), null))
+                    } else {
+                        callback(
+                            Status(
+                                response.code(),
+                                null,
+                                Exception(response.errorBody()?.string())
+                            )
+                        )
+                    }
+                } else {
+                    callback(Status(-1, null, Exception("Токен отсутствует")))
+                }
+            } catch (e: Exception) {
                 callback(Status(-1, null, e))
             }
         }

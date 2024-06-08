@@ -62,7 +62,7 @@ fun TagsView (tagsViewModel: TagsViewModel,
 ){
     val addTagTextField = tagsViewModel.addTagTextField
     val addTagTextFieldPlaceholder = "Добавить тег"
-    val criteriaList = tagsViewModel.сriteriaList
+    val criteriaList = tagsViewModel.criteriaList
     val expanded = tagsViewModel.expanded
     val selectedCriteria = tagsViewModel.selectedCriteria
     val mapTagsCriteria = tagsViewModel.mapTagsCriteria
@@ -130,7 +130,9 @@ fun TagsView (tagsViewModel: TagsViewModel,
                         Row (
                             modifier = Modifier
                                 .padding(8.dp)
-                                .clickable { expanded.value = true },
+                                .clickable {
+                                    expanded.value = true
+                                },
                         ){
                             Text(
                                 text = "Добавить критерии:",

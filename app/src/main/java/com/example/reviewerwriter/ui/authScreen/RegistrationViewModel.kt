@@ -52,11 +52,7 @@ class RegistrationViewModel(
             checkFieldForText(confirmPasswordTextField.value)
         ) {
             if (checkPasswordMatch(passwordTextField.value, confirmPasswordTextField.value)) {
-
                 val authDto = AuthDto(usernameTextField.value,passwordTextField.value)
-               // val authRepository = AuthRepositoryImpl()
-                //val regUseCase: RegUseCase = RegUseCase(authRepository)
-
                 // отправка запроса в многопоточном режиме
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
@@ -89,11 +85,9 @@ class RegistrationViewModel(
                     }
                 }
             } else {
-                //todo: анимация остутствия инфы в поле
                 _showToastMessage.postValue("пароли должны совпадать")
             }
         } else {
-            //todo: анимация остутствия инфы в поле
             _showToastMessage.postValue("все поля должны быть заполнены")
         }
     }

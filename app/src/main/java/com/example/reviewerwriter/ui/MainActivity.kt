@@ -17,7 +17,6 @@ import com.example.reviewerwriter.ui.authScreen.RegistrationView
 import com.example.reviewerwriter.ui.createScreen.ReviewCreatingView
 import com.example.reviewerwriter.ui.di.appModule
 import com.example.reviewerwriter.ui.mainScreen.MainView
-import com.example.reviewerwriter.ui.mainScreen.reviewView.ReviewCardView
 import com.example.reviewerwriter.ui.serviceScreen.ServiceView
 import com.example.reviewerwriter.ui.serviceScreen.criteria.CriteriaView
 import com.example.reviewerwriter.ui.serviceScreen.tags.TagsView
@@ -117,14 +116,14 @@ class MainActivity : ComponentActivity() {
                                 mainBottomNavViewModel = koinViewModel()
                             )
                         }
-                        composable(Screens.REVIEW_CARD_SCREEN){
+                        /*composable(Screens.REVIEW_CARD_SCREEN){
                             ReviewCardView(
                                 reviewCardViewModel = koinViewModel(),
                                 contect = this@MainActivity,
                                 navController = navController,
                                 mainBottomNavViewModel = koinViewModel()
                             )
-                        }
+                        }*/
                     }
                 }
             }

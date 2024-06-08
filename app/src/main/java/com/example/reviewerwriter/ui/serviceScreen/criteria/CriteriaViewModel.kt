@@ -4,12 +4,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.reviewerwriter.ui.serviceScreen.TagsCriteriaViewModel
 import com.example.reviewerwriter.ui.utils.CriteriaData
 import com.example.reviewerwriter.ui.utils.showToastMessage
 import kotlinx.coroutines.launch
 
 class CriteriaViewModel(
-    private val criteriaData: CriteriaData
+    private val criteriaData: CriteriaData,
+    private val tagsCriteriaViewModel: TagsCriteriaViewModel
 ) : ViewModel(), showToastMessage {
 
     override val _showToastMessage = MutableLiveData<String>()
@@ -24,7 +26,6 @@ class CriteriaViewModel(
             }
         }
     }
-
     override fun onshowToastMessageDone() {
         _showToastMessage.value = ""
     }
@@ -37,6 +38,7 @@ class CriteriaViewModel(
                     criteriaList.value = updatedCriteriaList
                 }
             }
+            tagsCriteriaViewModel.addNewCriteriaToData(criteriaList.value)
         } else {
             _showToastMessage.value = "Такой критерий уже есть"
         }

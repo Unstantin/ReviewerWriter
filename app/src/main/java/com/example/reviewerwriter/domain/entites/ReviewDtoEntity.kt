@@ -4,6 +4,6 @@ data class ReviewDtoEntity(
     val title: String,
     val mainText: String,
     val shortText: String,
-    val tags: SaveTagsEntity,
+    val tags: List<TagEntity>,
     val photos: List<String>
 )

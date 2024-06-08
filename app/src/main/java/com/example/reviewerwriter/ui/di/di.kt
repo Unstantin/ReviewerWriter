@@ -7,7 +7,9 @@ import com.example.reviewerwriter.domain.authUseCase.AuthRepository
 import com.example.reviewerwriter.domain.authUseCase.LogUseCase
 import com.example.reviewerwriter.domain.authUseCase.RegUseCase
 import com.example.reviewerwriter.domain.reviewsUseCase.AddReviewUseCase
+import com.example.reviewerwriter.domain.reviewsUseCase.GetAllReviews
 import com.example.reviewerwriter.domain.reviewsUseCase.ReviewsRepository
+import com.example.reviewerwriter.domain.reviewsUseCase.SendPhotoUseCase
 import com.example.reviewerwriter.domain.tagsUseCase.GetTagsUseCase
 import com.example.reviewerwriter.domain.tagsUseCase.SetTagsUseCase
 import com.example.reviewerwriter.domain.tagsUseCase.TagsRepository
@@ -16,7 +18,7 @@ import com.example.reviewerwriter.ui.authScreen.RegistrationViewModel
 import com.example.reviewerwriter.ui.createScreen.ReviewCreatingViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainBottomNavViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainViewModel
-import com.example.reviewerwriter.ui.mainScreen.reviewView.ReviewCardViewModel
+import com.example.reviewerwriter.ui.mainScreen.reviewCardView.ReviewCardViewModel
 import com.example.reviewerwriter.ui.serviceScreen.ServiceViewModel
 import com.example.reviewerwriter.ui.serviceScreen.TagsCriteriaViewModel
 import com.example.reviewerwriter.ui.serviceScreen.criteria.CriteriaViewModel
@@ -38,20 +40,25 @@ val appModule = module {
     factory { GetTagsUseCase(get()) }
     factory { SetTagsUseCase(get()) }
     factory { AddReviewUseCase(get()) }
+    factory { SendPhotoUseCase(get()) }
+    factory { GetAllReviews(get()) }
 
     // viewModel
     viewModel { LoginViewModel(get(), get(), get()) }
     viewModel { RegistrationViewModel(get(), get()) }
     single { MainBottomNavViewModel() }
-    viewModel { MainViewModel() }
-    viewModel { ReviewCreatingViewModel(get()) }
+    viewModel { MainViewModel(get()) }
+    viewModel { ReviewCreatingViewModel(get(), get()) }
     viewModel { ServiceViewModel() }
     viewModel { TagsViewModel(get(), get()) }
-    viewModel { CriteriaViewModel(get()) }
+    viewModel { CriteriaViewModel(get(),get()) }
     viewModel { ReviewCardViewModel()}
+
     single { TagsCriteriaViewModel(get(), get())}
+
     //TokenStorage
     single { TokenStorage(get()) }
+
     // CriteriaData как синглтон
     single { CriteriaData() }
 }

@@ -76,6 +76,7 @@ import com.example.reviewerwriter.ui.theme.Gray10
 import com.example.reviewerwriter.ui.theme.Gray60
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.ui.ui_components.MainBottomNavView
+import com.example.reviewerwriter.ui.utils.ObserveToastMessage
 import com.example.reviewerwriter.ui.utils.Screens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -107,6 +108,7 @@ fun ReviewCreatingView(
     val onSelectedTag = reviewCreatingViewModel.onSelectedTag
     val tags = reviewCreatingViewModel.tags
     val showCameraPreview = reviewCreatingViewModel.showCameraPreview
+    var mainRate = reviewCreatingViewModel.mainRate
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
@@ -135,20 +137,16 @@ fun ReviewCreatingView(
             }
         }
     )
+    //отслеживание
+    ObserveToastMessage(reviewCreatingViewModel, context)
+
     ReviewerWriterTheme {
         Scaffold(
             bottomBar = { MainBottomNavView(mainBottomNavViewModel, navController) },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        /*TODO: отправка на сервер*/
-                       /* reviewCreatingViewModel.createReview(
-                            reviewTitle,
-                            reviewDescriptionField,
-                            selectedImageUris,
-                            selectedText,
-
-                        )*/
+                        reviewCreatingViewModel.onButtonSaveClick()
                     }) {
                     Icon(
                         imageVector = Icons.Default.Save,
@@ -347,7 +345,7 @@ fun ReviewCreatingView(
                                 .fillMaxWidth()
                         ) {
                             IconButton(
-                                onClick = { expandedStar = true },
+                                onClick = { /*expandedStar = true*/ },
                                 modifier = Modifier
                                     .wrapContentSize()
                                     .fillMaxWidth()
@@ -355,7 +353,7 @@ fun ReviewCreatingView(
                             ) {
                                 Row {
                                     Text(
-                                        text = selectedText,
+                                        text = mainRate.value,
                                         modifier = Modifier
                                             .wrapContentSize()
                                             .fillMaxHeight(),

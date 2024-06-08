@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
 import com.example.reviewerwriter.ui.ui_components.DrawerItem
 import com.example.reviewerwriter.ui.ui_components.MyScaffold
+import com.example.reviewerwriter.ui.utils.ObserveToastMessage
 import com.example.reviewerwriter.ui.utils.Screens
 import kotlinx.coroutines.launch
 
@@ -65,6 +66,7 @@ fun MainView(
     )
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = mainViewModel.drawerState.value)
+    ObserveToastMessage(mainViewModel, context)
 
     ReviewerWriterTheme {
         ModalNavigationDrawer(
@@ -103,7 +105,6 @@ fun MainView(
                                 scope.launch {
                                     drawerState.close()
                                 }
-                                /*TODO: перенести в model*/
                             }
                         )
                     }
@@ -115,11 +116,3 @@ fun MainView(
         )
     }
 }
-
-
-/*@Preview(showBackground = true)
-@Composable
-private fun GreetingPreview() {
-    val navController = rememberNavController()
-    MainView(context = LocalContext.current, navController)
-}*/

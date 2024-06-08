@@ -23,11 +23,10 @@ class TagsViewModel(
     var expanded = mutableStateOf(false)
     var selectedCriteria = mutableStateOf(listOf<String>())
     var mapTagsCriteria = tagsCriteriaViewModel.mapTagsCriteria
-    var сriteriaList = tagsCriteriaViewModel.сriteriaList
+    var criteriaList = tagsCriteriaViewModel.criteriaList
     override fun onshowToastMessageDone() {
         _showToastMessage.value = ""
     }
-
     fun addTagCriteria(tag: String, criteria: List<String>) {
         if (addTagTextField.value in mapTagsCriteria.value.keys) {
             _showToastMessage.value = "Такой тег уже есть"

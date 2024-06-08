@@ -17,7 +17,7 @@ class TagsCriteriaViewModel(
     private val criteriaData: CriteriaData
 ): ViewModel() {
     var mapTagsCriteria = mutableStateOf<Map<String, List<String>>>(emptyMap())
-    var сriteriaList = mutableStateOf(listOf<String>())
+    var criteriaList = mutableStateOf(listOf<String>())
 
     fun getTagsCriteriaFromServer(){
         viewModelScope.launch {
@@ -54,11 +54,13 @@ class TagsCriteriaViewModel(
                 allCriteria.add(criteria.name ?: "")
             }
         }
-        сriteriaList.value = allCriteria
+        criteriaList.value = allCriteria
 
-        addNewCriteriaToData()
+        //addNewCriteriaToData()
     }
-    private fun addNewCriteriaToData() {
+    fun addNewCriteriaToData(newCriteriaList: List<String>) {
+        criteriaList.value = newCriteriaList
+        /* для обновления списка критериев при постоянных запросах, а не единоразовом
         viewModelScope.launch(Dispatchers.IO) {
             val newCriteria = сriteriaList.value.filter { criteria ->
                 !criteriaData.criteriaDto.value.contains(criteria)
@@ -69,6 +71,6 @@ class TagsCriteriaViewModel(
                     criteriaData.addCriteria(it)
                 }
             }
-        }
+        }*/
     }
 }
