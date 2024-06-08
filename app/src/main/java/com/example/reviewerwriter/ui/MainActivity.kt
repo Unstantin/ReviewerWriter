@@ -18,6 +18,7 @@ import com.example.reviewerwriter.ui.createScreen.ReviewCreatingView
 import com.example.reviewerwriter.ui.di.appModule
 import com.example.reviewerwriter.ui.mainScreen.MainView
 import com.example.reviewerwriter.ui.mainScreen.reviewView.ReviewCardView
+import com.example.reviewerwriter.ui.reviewScreen.ReviewView
 import com.example.reviewerwriter.ui.serviceScreen.ServiceView
 import com.example.reviewerwriter.ui.serviceScreen.criteria.CriteriaView
 import com.example.reviewerwriter.ui.serviceScreen.tags.TagsView
@@ -47,7 +48,6 @@ class MainActivity : ComponentActivity() {
             }
 
             ReviewerWriterTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
@@ -121,6 +121,14 @@ class MainActivity : ComponentActivity() {
                             ReviewCardView(
                                 reviewCardViewModel = koinViewModel(),
                                 contect = this@MainActivity,
+                                navController = navController,
+                                mainBottomNavViewModel = koinViewModel()
+                            )
+                        }
+                        composable(Screens.REVIEW_SCREEN){
+                            ReviewView(
+                                reviewViewModel = koinViewModel(),
+                                context = this@MainActivity,
                                 navController = navController,
                                 mainBottomNavViewModel = koinViewModel()
                             )

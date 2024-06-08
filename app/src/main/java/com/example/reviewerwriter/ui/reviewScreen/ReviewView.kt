@@ -42,11 +42,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import com.example.reviewerwriter.R
+import com.example.reviewerwriter.data.dto.CriteriaEntity
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(
@@ -69,6 +71,8 @@ fun ReviewView(
 
     // TODO не присылается информация о том лайкнута ли уже запись
     // TODO та же хуйня с избранным
+
+    // TODO ФОТКИ НЕ РЕАЛИЗОВАНЫ
     ReviewerWriterTheme {
         Scaffold(
             bottomBar = { MainBottomNavView(mainBottomNavViewModel, navController) },
@@ -229,13 +233,13 @@ fun CriteriaItem(name: String, value: Int) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TagsFlowRow(criteria: Map<String, Int>, modifier: Modifier = Modifier) {
+fun TagsFlowRow(criteria: List<CriteriaEntity>, modifier: Modifier = Modifier) {
     FlowRow(
         maxItemsInEachRow = Int.MAX_VALUE,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         criteria.forEach { criteria ->
-            CriteriaItem(name = criteria.key, value = criteria.value)
+            CriteriaItem(name = criteria.name!!, value = criteria.value!!)
         }
     }
 }

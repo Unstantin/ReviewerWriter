@@ -1,15 +1,22 @@
 package com.example.reviewerwriter.data.dto
 
-import java.time.LocalDateTime
+data class ReviewInfo(
+    val id: Int,
+    val title: String,
+    val mainText: String,
+    val shortText: String,
+    val authorNickname: String,
+    val date: String,
+    val tags: ArrayList<TagEntity>,
+    val likesN: Int,
+    val photos: ArrayList<String>
+)
 
-class ReviewInfo(
-    var id: Int? = null,
-    var title: String? = null,
-    var mainText: String? = null,
-    var shortText: String? = null,
-    var authorNickname: String? = null,
-    var date: LocalDateTime? = null,
-    var tags: ArrayList<Tag>? = null,
-    var likesN: Int? = null,
-    var photos: ArrayList<String>? = null
+data class CriteriaEntity(
+    val name: String?,
+    val value: Int?
+)
+data class TagEntity(
+    val name: String,
+    val criteria: List<CriteriaEntity>?
 )
