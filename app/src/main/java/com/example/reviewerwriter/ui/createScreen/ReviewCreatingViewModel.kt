@@ -37,27 +37,17 @@ class ReviewCreatingViewModel(
 ) : ViewModel(), showToastMessage {
     override val _showToastMessage = MutableLiveData<String>()
     var expandedTag = mutableStateOf(false)
-    val iconList = listOf(
-        "-",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5"
-    )
     var onSelectedCriteria = mutableStateOf("")
     var onSelectedTag = mutableStateOf("")
     var expandedSelectStar = mutableStateOf(false)
     var reviewTitle = mutableStateOf("")
     var reviewDescriptionField = mutableStateOf("")
     var expanded = mutableStateOf(false)
-    var selectedText = mutableStateOf(iconList[0])
     var selectedImage = mutableStateOf<List<Bitmap>>(emptyList())
     val tags = mutableStateOf(emptyList<TagEntity>())
     var showCameraPreview = mutableStateOf(false)
-    var listPhotosNames = mutableStateOf(emptyList<String>())
+    var listPhotosNames =mutableStateOf(listOf<String>())
     var mainRate = mutableStateOf("0.0")
-
     fun takePhoto(
         controller: LifecycleCameraController,
         context: Context
@@ -163,18 +153,93 @@ class ReviewCreatingViewModel(
         }
         calculateAverageRating()
     }
-    fun onButtonSaveClick(){
-        sendPhotosOnServer()
-        val reviewDto = ReviewDtoEntity(
-            title = reviewTitle.value,
-            mainText = reviewDescriptionField.value,
-            shortText = "", // Если у вас есть короткий текст, вы должны его преобразовать и добавить здесь
-            tags = tags.value,
-            photos = listPhotosNames.value
-        )
-        CoroutineScope(Dispatchers.IO).launch {
-            addReviewUseCase.execute(reviewDto){status ->
-                when(status.statusCode){
+    fun onButtonSaveClick() {
+        viewModelScope.launch {
+            selectedImage.value.forEach { bitmap ->
+                try {
+                    // Создаем MultipartBody с одним изображением
+                    val multipartBody = MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("file", "image.jpg", bitmap.toRequestBody())
+                        .build()
+
+                    // Отправляем изображение на сервер
+                    sendPhotoUseCase.execute(multipartBody) { status ->
+                        when (status.statusCode) {
+                            200 -> {
+                                status.value?.let { photoFileNameEntity ->
+                                    // Update the list on the main thread
+                                    viewModelScope.launch(Dispatchers.Main) {
+                                        var arrList: MutableList<String> = listPhotosNames.value.toMutableList()
+                                        arrList.add(photoFileNameEntity.filename)
+                                        listPhotosNames.value = arrList.toList()
+                                        Log.w("Принял фото", photoFileNameEntity.filename)
+                                        yaebal()
+                                    }
+                                }
+                            }
+                            else -> {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    withContext(Dispatchers.Main) {
+                                        _showToastMessage.value = "Ошибка: ${status.errors?.message}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Вызов тоста в основном потоке
+                    withContext(Dispatchers.Main) {
+                        _showToastMessage.value = "Ошибка: ${e.message}"
+                        e.message?.let { Log.w("ошибка catch", it) }
+                    }
+                }
+            }
+
+           /* val reviewDto = ReviewDtoEntity(
+                title = reviewTitle.value,
+                mainText = reviewDescriptionField.value,
+                shortText = reviewDescriptionField.value,
+                tags = tags.value,
+                photos = listPhotosNames.value
+            )
+            Log.w("фото",listPhotosNames.value.toString())
+            addReviewUseCase.execute(reviewDto) { status ->
+                when (status.statusCode) {
+                    200 -> {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(Dispatchers.Main) {
+                                _showToastMessage.value =
+                                    "Рецензия сохранена"
+                            }
+                        }
+                    }
+                    else -> {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                withContext(Dispatchers.Main) {
+                                    // Обработка ошибки
+                                    _showToastMessage.value =
+                                        "Ошибка: ${status.errors?.message}"
+                                }
+                            }
+                    }
+                }
+            }*/
+        }
+    }
+
+    fun yaebal(){
+        viewModelScope.launch {
+            val reviewDto = ReviewDtoEntity(
+                title = reviewTitle.value,
+                mainText = reviewDescriptionField.value,
+                shortText = reviewDescriptionField.value,
+                tags = tags.value,
+                photos = listPhotosNames.value
+            )
+            Log.w("фото",listPhotosNames.value.toString())
+            addReviewUseCase.execute(reviewDto) { status ->
+                when (status.statusCode) {
                     200 -> {
                         CoroutineScope(Dispatchers.IO).launch {
                             withContext(Dispatchers.Main) {
@@ -196,48 +261,48 @@ class ReviewCreatingViewModel(
             }
         }
     }
-    fun sendPhotosOnServer() {
+   /* suspend fun sendPhotosOnServer() {
+        //var arrList : ArrayList<String> = ArrayList()
         selectedImage.value.forEach { bitmap ->
-            viewModelScope.launch {
-                try {
-                    // Создаем MultipartBody с одной частью изображения
-                    val multipartBody = MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("file", "image.jpg", bitmap.toRequestBody())
-                        .build()
+            try {
+                // Создаем MultipartBody с одним изображением
+                val multipartBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", "image.jpg", bitmap.toRequestBody())
+                    .build()
 
-                    // Отправляем изображение на сервер
-                    sendPhotoUseCase.execute(multipartBody) { status ->
-                        when (status.statusCode) {
-                            200 -> {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    withContext(Dispatchers.Main) {
-                                        listPhotosNames.value =
-                                            listPhotosNames.value + status.value!!
-                                        Log.w("Строка имя фотки",status.value)
-                                    }
+                // Отправляем изображение на сервер
+                sendPhotoUseCase.execute(multipartBody) { status ->
+                    when (status.statusCode) {
+                        200 -> {
+                            status.value?.let { photoFileNameEntity ->
+                                // Update the list on the main thread
+                                viewModelScope.launch(Dispatchers.Main) {
+                                    var arrList: MutableList<String> = listPhotosNames.value.toMutableList()
+                                    arrList.add(photoFileNameEntity.filename)
+                                    listPhotosNames.value = arrList.toList()
+                                    Log.w("Принял фото", photoFileNameEntity.filename)
                                 }
                             }
-                            else -> {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    withContext(Dispatchers.Main) {
-                                        _showToastMessage.value =
-                                            "Ошибка: ${status.errors?.message}"
-                                    }
+                        }
+                        else -> {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                withContext(Dispatchers.Main) {
+                                    _showToastMessage.value = "Ошибка: ${status.errors?.message}"
                                 }
                             }
                         }
                     }
-                } catch (e: Exception) {
-                    // Вызов тоста в основном потоке
-                    withContext(Dispatchers.Main) {
-                        _showToastMessage.value = "Ошибка: ${e.message}"
-                        e.message?.let { Log.w("ошибка catch", it) }
-                    }
+                }
+            } catch (e: Exception) {
+                // Вызов тоста в основном потоке
+                withContext(Dispatchers.Main) {
+                    _showToastMessage.value = "Ошибка: ${e.message}"
+                    e.message?.let { Log.w("ошибка catch", it) }
                 }
             }
         }
-    }
+    }*/
     fun Bitmap.toByteArray(): ByteArray {
         val stream = ByteArrayOutputStream()
         this.compress(Bitmap.CompressFormat.JPEG, 100, stream)

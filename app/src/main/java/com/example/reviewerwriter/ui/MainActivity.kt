@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.reviewerwriter.ui.authScreen.LoginView
 import com.example.reviewerwriter.ui.authScreen.RegistrationView
+import com.example.reviewerwriter.ui.chatScreen.ChatsScreenView
 import com.example.reviewerwriter.ui.createScreen.ReviewCreatingView
 import com.example.reviewerwriter.ui.di.appModule
 import com.example.reviewerwriter.ui.mainScreen.MainView
@@ -116,14 +117,13 @@ class MainActivity : ComponentActivity() {
                                 mainBottomNavViewModel = koinViewModel()
                             )
                         }
-                        /*composable(Screens.REVIEW_CARD_SCREEN){
-                            ReviewCardView(
-                                reviewCardViewModel = koinViewModel(),
-                                contect = this@MainActivity,
+                        composable(Screens.CHATS_SCREEN){
+                            ChatsScreenView(
                                 navController = navController,
-                                mainBottomNavViewModel = koinViewModel()
+                                mainBottomNavViewModel = koinViewModel(),
+                                context = this@MainActivity
                             )
-                        }*/
+                        }
                     }
                 }
             }

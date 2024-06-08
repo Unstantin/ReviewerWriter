@@ -2,6 +2,8 @@ package com.example.reviewerwriter.data
 
 import android.util.Log
 import com.example.reviewerwriter.data.network.RetrofitFactory
+import com.example.reviewerwriter.domain.entites.ByteArrayEntity
+import com.example.reviewerwriter.domain.entites.PhotoFileNameEntity
 import com.example.reviewerwriter.domain.entites.ReviewCardEntity
 import com.example.reviewerwriter.domain.entites.ReviewDtoEntity
 import com.example.reviewerwriter.domain.entites.Status
@@ -76,7 +78,7 @@ class ReviewRepositoryImpl(private val tokenStorage: TokenStorage): ReviewsRepos
         }
     }
 
-    override fun sendPhoto(photo: MultipartBody, callback: (Status<String>) -> Unit) {
+    override fun sendPhoto(photo: MultipartBody, callback: (Status<PhotoFileNameEntity>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (tokenStorage.getToken() != null) {
@@ -85,7 +87,37 @@ class ReviewRepositoryImpl(private val tokenStorage: TokenStorage): ReviewsRepos
                         photo
                     )
                     if (response.isSuccessful) {
-                        callback(Status(response.code(), response.body().toString(), null))
+                        callback(Status(response.code(), PhotoFileNameEntity(filename = response.body()?.filename.toString()), null))
+                    } else {
+                        callback(
+                            Status(
+                                response.code(),
+                                null,
+                                Exception(response.errorBody()?.string())
+                            )
+                        )
+                    }
+                } else {
+                    callback(Status(-1, null, Exception("Токен отсутствует")))
+                }
+            } catch (e: Exception) {
+                Log.w("ошибка", e.toString())
+                callback(Status(-1, null, e))
+            }
+        }
+    }
+
+    override fun getPhoto(photo: String, callback: (Status<ByteArrayEntity>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (tokenStorage.getToken() != null) {
+                    val response = mainApi.getPhoto(
+                        "Bearer ${tokenStorage.getToken()}",
+                        photo
+                    )
+                    Log.w("бади", response.body().toString())
+                    if (response.isSuccessful) {
+                        callback(Status(response.code(), ByteArrayEntity(response.body()!!), null))
                     } else {
                         callback(
                             Status(

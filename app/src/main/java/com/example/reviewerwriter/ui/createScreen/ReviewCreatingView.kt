@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -97,9 +98,6 @@ fun ReviewCreatingView(
     val reviewTitleFieldPlaceholder = "Название"
     var reviewDescriptionField by reviewCreatingViewModel.reviewDescriptionField
     val reviewDescriptionFieldPlaceholder = "Описание"
-    var expandedStar by reviewCreatingViewModel.expanded
-    val iconList = reviewCreatingViewModel.iconList
-    var selectedText by reviewCreatingViewModel.selectedText
     var selectedImage by reviewCreatingViewModel.selectedImage
     val mapTagsCriteria = tagsViewModel.mapTagsCriteria
     val expandedTag =  reviewCreatingViewModel.expandedTag
@@ -141,6 +139,9 @@ fun ReviewCreatingView(
     ObserveToastMessage(reviewCreatingViewModel, context)
 
     ReviewerWriterTheme {
+        CenterAlignedTopAppBar(
+            title = { Text(text = "Создать рецензию") }
+        )
         Scaffold(
             bottomBar = { MainBottomNavView(mainBottomNavViewModel, navController) },
             floatingActionButton = {
@@ -365,22 +366,6 @@ fun ReviewCreatingView(
                                         contentDescription = "select a rating",
                                         modifier = Modifier
                                             .size(25.dp)
-                                    )
-                                }
-                            }
-                            DropdownMenu(
-                                expanded = expandedStar,
-                                onDismissRequest = { expandedStar = false },
-                                modifier = Modifier
-                                    .width(150.dp)
-                            ) {
-                                iconList.forEach { icon ->
-                                    DropdownMenuItem(
-                                        text = { Text(icon) },
-                                        onClick = {
-                                            expandedStar = false
-                                            selectedText = icon
-                                        }
                                     )
                                 }
                             }

@@ -43,7 +43,7 @@ fun MainBottomNavView(
             selectedIcon = Icons.Default.Person,
             unselectedIcon = Icons.Outlined.Person,
             hasNews = false,
-            screen = Screens.MAIN_SCREEN
+            screen = Screens.CHATS_SCREEN
         ),
         BottomNavigationItem(
             title = "Создать",

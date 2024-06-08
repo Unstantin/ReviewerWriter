@@ -8,6 +8,7 @@ import com.example.reviewerwriter.domain.authUseCase.LogUseCase
 import com.example.reviewerwriter.domain.authUseCase.RegUseCase
 import com.example.reviewerwriter.domain.reviewsUseCase.AddReviewUseCase
 import com.example.reviewerwriter.domain.reviewsUseCase.GetAllReviews
+import com.example.reviewerwriter.domain.reviewsUseCase.GetPhotoUseCase
 import com.example.reviewerwriter.domain.reviewsUseCase.ReviewsRepository
 import com.example.reviewerwriter.domain.reviewsUseCase.SendPhotoUseCase
 import com.example.reviewerwriter.domain.tagsUseCase.GetTagsUseCase
@@ -42,6 +43,7 @@ val appModule = module {
     factory { AddReviewUseCase(get()) }
     factory { SendPhotoUseCase(get()) }
     factory { GetAllReviews(get()) }
+    factory { GetPhotoUseCase(get()) }
 
     // viewModel
     viewModel { LoginViewModel(get(), get(), get()) }
@@ -52,7 +54,7 @@ val appModule = module {
     viewModel { ServiceViewModel() }
     viewModel { TagsViewModel(get(), get()) }
     viewModel { CriteriaViewModel(get(),get()) }
-    viewModel { ReviewCardViewModel()}
+    viewModel { ReviewCardViewModel(get())}
 
     single { TagsCriteriaViewModel(get(), get())}
 

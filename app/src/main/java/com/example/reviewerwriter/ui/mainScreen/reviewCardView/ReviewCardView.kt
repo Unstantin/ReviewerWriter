@@ -6,29 +6,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.reviewerwriter.domain.entites.ReviewCardEntity
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
@@ -36,15 +32,23 @@ import coil.compose.AsyncImage
 )
 @Composable
 fun ReviewCardView(
+    reviewCardViewModel: ReviewCardViewModel,
+    reviewCard : ReviewCardEntity,
 onClick: () -> Unit
 ) {
 
-    val imageUris: List<String> = mutableListOf()
-    val pagerState = rememberPagerState(pageCount = { imageUris.size })
-    val reviewTitle: String = "Название"
-    val selectedRate: Int = 5
-    val reviewDescription: String = "Описание"
-    val tags = mutableStateOf(listOf<String>(
+    val imageNames: List<String> = reviewCard.photos!!
+    val pagerState = rememberPagerState(pageCount = { imageNames.size })
+    val reviewTitle: String = reviewCard.title!!
+    //val selectedRate: Int = 5
+    val reviewDescription: String = reviewCard.shortText!!
+    LaunchedEffect(key1 = imageNames) {
+        reviewCardViewModel.getBitmapList(imageNames)
+    }
+
+    val bitmapList by reviewCardViewModel.bitmapList.collectAsState()
+
+    /*val tags = mutableStateOf(listOf<String>(
         "tag2",
         "tag2"
     ))
@@ -52,6 +56,8 @@ onClick: () -> Unit
         "criteria1",
         "criteria2"
     ))
+*/
+
 
     Card(
         modifier = Modifier
@@ -63,8 +69,11 @@ onClick: () -> Unit
             modifier = Modifier
                 .padding(5.dp)
         ) {
-            Box {
-                if (imageUris.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+            ) {
+                if (bitmapList.isNotEmpty()) {
                     HorizontalPager(
                         state = pagerState
                     ) { page ->
@@ -74,7 +83,7 @@ onClick: () -> Unit
                                 }
                         ) {
                             AsyncImage(
-                                model = imageUris[page],
+                                model = bitmapList[page],
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -90,7 +99,7 @@ onClick: () -> Unit
                     text = reviewTitle,
                     maxLines = 2
                 )
-                Row {
+                /*Row {
                     Text(
                         text = selectedRate.toString(),
                         modifier = Modifier
@@ -104,13 +113,13 @@ onClick: () -> Unit
                         modifier = Modifier
                             .size(25.dp)
                     )
-                }
+                }*/
             }
             Text(
                 text = reviewDescription,
                 maxLines = 3
             )
-            FlowRow(
+            /*FlowRow(
             ) {
                 tags.value.forEach { tag ->
                     InputChip(
@@ -137,7 +146,7 @@ onClick: () -> Unit
                             .padding(horizontal = 2.dp),
                     )
                 }
-            }
+            }*/
         }
     }
 }

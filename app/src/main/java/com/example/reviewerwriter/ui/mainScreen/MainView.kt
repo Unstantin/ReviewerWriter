@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -32,7 +29,7 @@ import com.example.reviewerwriter.ui.utils.ObserveToastMessage
 import com.example.reviewerwriter.ui.utils.Screens
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainView(
@@ -43,21 +40,21 @@ fun MainView(
 ) {
 
     val items = listOf(
-        DrawerItem(
+        /*DrawerItem(
             Icons.Default.Settings,
             title = "Настройки",
-            screen = Screens.MAIN_SCREEN
+            screen = ""
         ),
         DrawerItem(
             Icons.Default.Add,
             title = "Пригласить",
-            screen = Screens.MAIN_SCREEN
+            screen = ""
         ),
         DrawerItem(
             Icons.Default.Info,
             title = "Помощь",
-            screen = Screens.MAIN_SCREEN
-        ),
+            screen = ""
+        ),*/
         DrawerItem(
             Icons.Default.ExitToApp,
             title = "Выход",

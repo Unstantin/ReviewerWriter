@@ -14,6 +14,7 @@ import com.example.reviewerwriter.ui.mainScreen.MainBottomNavViewModel
 import com.example.reviewerwriter.ui.mainScreen.MainViewModel
 import com.example.reviewerwriter.ui.mainScreen.reviewCardView.ReviewCardView
 import com.example.reviewerwriter.ui.theme.ReviewerWriterTheme
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +42,8 @@ fun MyScaffold(
             ) {
                 items(mainViewModel.reviewCards.value.size) {
                     ReviewCardView(
-                        /*TODO: передавать reviewCards.value для заполнения полей */
+                        reviewCardViewModel = koinViewModel(),
+                        mainViewModel.reviewCards.value[it],
                         onClick = { /* Обработка клика на карточку отзыва */ }
                     )
                 }
